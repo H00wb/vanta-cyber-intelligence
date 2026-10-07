@@ -1,7 +1,7 @@
 {
   "environment": "Vercel production / Supabase Postgres",
   "baseUrl": "https://vanta-cyber-intelligence.vercel.app",
-  "checkedAt": "2026-10-07T22:52:07.504Z",
+  "checkedAt": "2026-10-07T21:44:01.2Z",
   "landingStatus": 200,
   "heroStatus": 200,
   "heroSha256": "fc326c761ff5e78c794ada44d8bfeda974d929b79a9217efc6f27e474c3ce896",
@@ -10,19 +10,19 @@
     "email": "ece-live@example.com",
     "service": "risk-mapping",
     "description": "Tamamen kurgusal Vercel ve Supabase teslim testi için dijital varlık ve risk haritalama hizmetini değerlendirmek istiyoruz.",
-    "requestId": "5a2de20c-31ab-434a-9f4c-3e59caa13695"
+    "requestId": "f8b91b0a-017b-44b4-94b2-8f005e26f8d9"
   },
   "created": {
     "status": 201,
     "body": {
-      "id": "5a2de20c-31ab-434a-9f4c-3e59caa13695",
+      "id": "f8b91b0a-017b-44b4-94b2-8f005e26f8d9",
       "replayed": false
     }
   },
   "replay": {
     "status": 200,
     "body": {
-      "id": "5a2de20c-31ab-434a-9f4c-3e59caa13695",
+      "id": "f8b91b0a-017b-44b4-94b2-8f005e26f8d9",
       "replayed": true
     }
   },
@@ -35,41 +35,41 @@
     "email": "parallel-test@example.com",
     "service": "risk-mapping",
     "description": "Tamamen kurgusal Vercel ve Supabase teslim testi için dijital varlık ve risk haritalama hizmetini değerlendirmek istiyoruz.",
-    "requestId": "a28c2c3b-4aa1-45b3-9472-a002fcfb8e23"
+    "requestId": "fcaa7ee3-56dd-4ebd-af21-3041cbaa6669"
   },
   "parallel": [
     {
       "status": 201,
       "body": {
-        "id": "a28c2c3b-4aa1-45b3-9472-a002fcfb8e23",
+        "id": "fcaa7ee3-56dd-4ebd-af21-3041cbaa6669",
         "replayed": false
       }
     },
     {
       "status": 200,
       "body": {
-        "id": "a28c2c3b-4aa1-45b3-9472-a002fcfb8e23",
+        "id": "fcaa7ee3-56dd-4ebd-af21-3041cbaa6669",
         "replayed": true
       }
     },
     {
       "status": 200,
       "body": {
-        "id": "a28c2c3b-4aa1-45b3-9472-a002fcfb8e23",
+        "id": "fcaa7ee3-56dd-4ebd-af21-3041cbaa6669",
         "replayed": true
       }
     },
     {
       "status": 200,
       "body": {
-        "id": "a28c2c3b-4aa1-45b3-9472-a002fcfb8e23",
+        "id": "fcaa7ee3-56dd-4ebd-af21-3041cbaa6669",
         "replayed": true
       }
     },
     {
       "status": 200,
       "body": {
-        "id": "a28c2c3b-4aa1-45b3-9472-a002fcfb8e23",
+        "id": "fcaa7ee3-56dd-4ebd-af21-3041cbaa6669",
         "replayed": true
       }
     }
@@ -77,7 +77,5 @@
   "anonReadStatus": 401,
   "anonWriteStatus": 401,
   "directInvalidRpcStatus": 400,
-  "databaseReadVerification": "verified independently in evidence/ssr-production-records.json",
-  "project": "fjzgkdymkltwvofbkubr",
-  "independentSqlCheckedAt": "2026-10-07T22:53:37.384Z"
+  "databaseReadVerification": "verified independently: evidence/supabase-production-records.json"
 }

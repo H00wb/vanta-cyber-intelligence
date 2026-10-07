@@ -17,14 +17,14 @@ Bu dosya gereksinimlerin uygulama ve kanıt karşılığını gösterir; kesin p
 - Mobil/masaüstü sayfa: `app/page.tsx`, `app/globals.css`; `evidence/vercel-desktop.png`, `vercel-mobile.png`.
 - Dört alan ve çift doğrulama: `components/request-form.tsx`, `lib/request-validation.ts`, API handler.
 - Gönderiliyor/başarı/hata: form durumu ve browser suite; başarı yalnız doğrulanmış kayıt sonucu.
-- Kalıcı kayıt: `public.vanta_service_requests`; `evidence/supabase-production-records.json` bağımsız SQL.
+- Kalıcı kayıt: `public.vanta_service_requests`; `evidence/ssr-production-records.json` bağımsız SQL.
 - Tekrar/paralellik: aynı UUID/aynı içerik 200; farklı içerik 409; beş gerçek istek ve count=1.
 - CanlıURL ve source: public Vercel, H00wb GitHub; Git entegrasyonu.
 - Belgeler: README.md, AI_LOG.md, TEST_REHBERI.txt; kesin commit/dış teslim kaydı.
 
 ## Kanıt dosyaları
 
-`ssr-unit-tests.tap`:47 test. `supabase-browser-results.json`:15 yerel test. `vercel-browser-results.json`:15 canlı test. `supabase-local-records.json`:yerel Next→gerçek PG. `supabase-production-verification.json`:canlı HTTPS/API/erişim kontrolleri. `supabase-production-records.json`:normal/paralel/browser/replay satırları ve rol sınırları. `vercel-submit.json`, `vercel-lost-response.json`:gerçek browser gönderim kimlikleri.
+`ssr-unit-tests.tap`:47 test (altı SSR cookie/cache testi mock SDK kullanır). `ssr-local-browser-results.json`:15 yerel test. `ssr-vercel-browser-results.json`:15 canlı test. `ssr-local-records.json`:yerel Next→gerçek PG. `supabase-production-verification.json`:canlı HTTPS/API/erişim kontrolleri. `ssr-production-records.json`:normal/paralel/browser/replay satırları ve rol sınırları. `vercel-submit.json`, `vercel-lost-response.json`:gerçek browser gönderim kimlikleri. Güncel ayrı Supabase projesi `fjzgkdymkltwvofbkubr`; önceki raporlar tarihsel olarak korunur. Auth sign-in/expired-session testi yapılmadı.
 
 ## Sınırlar
 

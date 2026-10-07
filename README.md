@@ -51,7 +51,7 @@ Yerel uygulama da yapılandırılan gerçek Supabase'e yazar. Yalnız kurgusal i
 - `utils/supabase/client.ts` ve `server.ts`: istenen browser / cookie tabanlı SSR istemci yardımcıları.
 - `utils/supabase/middleware.ts` ve Next.js 16 `proxy.ts`: getClaims ile oturum yenileme, request/response cookie köprüsü ve SDK cache başlıklarının taşınması. API ve statik dosyalar matcher dışıdır; landing page ve talep formu anonim kullanılır.
 
-SSR testleri mock SDK ile oturum/cookie/cache sözleşmesini kontrol eder. Gerçek bir kullanıcıyla sign-in/expired-session yenilemesi bu teslimde sınanmadı; siteye giriş veya todos sayfası eklenmedi. Gerçek anonim kayıt akışı yeni Supabase projesinde ayrıca sınanır.
+SSR testleri mock SDK ile oturum/cookie/cache sözleşmesini kontrol eder. Gerçek bir kullanıcıyla sign-in/expired-session yenilemesi bu teslimde sınanmadı; siteye giriş veya todos sayfası eklenmedi. Gerçek anonim kayıt akışı yeni Supabase projesinde ayrıca sınandı; yerel ve canlı üretim testleri aynı ayrı projeye yazdı.
 
 İsim 2–100, e-posta en fazla 254, açıklama 20–2000 Unicode kod noktası olmalıdır; hizmet allowlist'ten seçilir. Kontrol karakterleri reddedilir; açıklamada satır sonu/tab kabul edilir. E-posta küçük harfe çevrilir, alan kenarlarındaki boşluklar temizlenir. Gönderim kimliği UUID v4'tür. Sunucu JSON biçimini, yöntemi, gerçek gövde byte sınırını (16 KiB), alanları ve Origin'i kontrol eder. Next.js proxy ortamında public Host/forwarded protocol kullanılır; farklı origin reddedilir.
 
@@ -84,7 +84,7 @@ npm run test:e2e
 - Canlı HTTPS betiğinde 201/200/409/422/405, NUL reddi ve beş paralel istekte [201,200,200,200,200] doğrulandı. Anonim tablo okuma/yazma **401** ile reddedildi; doğrudan geçersiz RPC **400** döndürdü.
 - HTTP ve tarayıcı fixture'ları bağımsız Supabase SQL sorgusuyla okundu: dört alan/zaman eşleşti ve her kimlik için satır sayısı **1**. RLS ve anon/authenticated tablo yetkileri ayrıca doğrulandı.
 
-Kanıtlar: `evidence/ssr-unit-tests.tap`, `supabase-browser-results.json`, `supabase-local-records.json`, `vercel-browser-results.json`, `supabase-production-verification.json`, `supabase-production-records.json`, `vercel-submit.json`, `vercel-lost-response.json`, `vercel-desktop.png`, `vercel-mobile.png`.
+Güncel ayrı Supabase projesinin kanıtları: `evidence/ssr-unit-tests.tap`, `ssr-local-browser-results.json`, `ssr-local-records.json`, `ssr-vercel-browser-results.json`, `supabase-production-verification.json`, `ssr-production-records.json`, `vercel-submit.json`, `vercel-lost-response.json`, `vercel-desktop.png`, `vercel-mobile.png`. Önceki ortak Supabase projesinin raporları tarihsel olarak korunur; güncel kayıt kimlikleri TXT dosyasındadır.
 
 Canlı HTTP kontrolü, ortam değerleri hazırken şöyle çalıştırılır (yeni kurgusal kayıt oluşturur):
 

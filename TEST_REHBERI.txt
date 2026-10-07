@@ -7,7 +7,7 @@ Yalnız kurgusal isim/e-posta/açıklama kullanın. Örnek: Deniz Örnek / deniz
 1. KURULUM
 Node.js 24.x kurulu olmalı. Kaynak depoyu klonlayıp klasöründe:
   npm ci
-.env.example dosyasını .env.local olarak kopyalayın; kendi Supabase URL ve publishable key değerlerinizi girin.
+.env.example dosyasını .env.local olarak kopyalayın; NEXT_PUBLIC_SUPABASE_URL ve NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY değerlerini girin. Güncel teslim projesi: fjzgkdymkltwvofbkubr.
 Supabase SQL Editor'de supabase/migrations/20261007212753_vanta_requests.sql dosyasını yeni kurulumda bir kez çalıştırın. Mevcut teslim projesinde zaten uygulanmıştır.
   npm run build
   npm run start
@@ -21,12 +21,12 @@ Bu yerel uygulama da ayarladığınız gerçek Supabase projesine yazar.
   npx playwright install chromium
   npm run test:e2e
 Beklenen: 47 Node testi ve 15 Chromium testi başarılı.
-Node testlerindeki SQLite fixture/mock HTTP gerçek PostgreSQL kanıtı değildir.
+Node testlerindeki SQLite fixture/mock HTTP gerçek PostgreSQL kanıtı değildir. Altı SSR testi mock SDK ile getClaims, cookie/cache aktarımı ve istek izolasyonunu sınar; gerçek Auth giriş/expired-session yenilemesi sınanmadı.
 Chromium akışındaki gerçek form gönderimleri Supabase'e kurgusal kayıt oluşturur.
 
 Canlı Chromium testi, Windows PowerShell (yeni kurgusal kayıtlar oluşturur):
   $env:TEST_BASE_URL='https://vanta-cyber-intelligence.vercel.app'
-  $env:TEST_REPORT_FILE='evidence/vercel-browser-results.json'
+  $env:TEST_REPORT_FILE='evidence/ssr-vercel-browser-results.json'
   npm run test:e2e
 Yerel teste geri dönmek için bu iki ortam değişkenini kaldırın.
 
@@ -60,11 +60,11 @@ Dört alan ve timestamp doğru, count=1 olmalı. Sayfa yenilemesi veya Vercel re
 Tablo ziyaretçilere açılmaz; bu SQL kontrolü yetkili Supabase panelindendir.
 
 Teslim fixture'ları:
-HTTP normal: f8b91b0a-017b-44b4-94b2-8f005e26f8d9
-HTTP paralel: fcaa7ee3-56dd-4ebd-af21-3041cbaa6669
-Canlı browser normal: 340b7d56-2c92-4607-8339-1edf702b3d52
-Canlı browser yanıt kaybı/tekrar: 07d8af98-414c-4ea1-9afe-187e0ee79d3d
-Kanıt: evidence/supabase-production-records.json (her id için tek satır).
+HTTP normal: 5a2de20c-31ab-434a-9f4c-3e59caa13695
+HTTP paralel: a28c2c3b-4aa1-45b3-9472-a002fcfb8e23
+Canlı browser normal: 990cd606-4ede-46c4-bfcf-33466c31ba92
+Canlı browser yanıt kaybı/tekrar: fdbad782-708b-4514-a2b7-e5b43cccba71
+Kanıt: evidence/ssr-production-records.json (her id için tek satır).
 
 6. HATA / TEKRAR / KAYIT GİZLİLİĞİ
 Chromium suite;503, offline, HTML yanıt, yanlış id, 15 sn timeout ve gerçek commit sonrası yanıt kaybını kontrol eder.
@@ -77,7 +77,7 @@ Anonim vanta_submit_request RPC kasıtlı olarak talep oluşturabilir; doğrudan
 
 7. SONUÇ VE TESLİM
 47 Node,15 yerel Chromium,15 canlı Chromium başarılıdır; lint,typecheck ve production build geçti.
-Raporların hedef ortam/tarih bilgilerine bakın. D1/Sites raporları ilk sürümün tarihsel kanıtıdır.
+Güncel kanıtlar: evidence/ssr-unit-tests.tap, ssr-local-browser-results.json, ssr-local-records.json, ssr-vercel-browser-results.json ve ssr-production-records.json. Raporların hedef ortam/tarih bilgilerine bakın. D1/Sites ve önceki ortak Supabase projesi raporları tarihsel kanıttır.
 AI_LOG birinci ağızda teknik kararları, AI katkısını, gerçek bulguları ve doğrulamayı açıklar.
 Kesin commit: git rev-parse HEAD. Uzak eşleşme: git ls-remote origin refs/heads/main.
 Son commit, kaynak ZIP ve redeploy sonrası kayıt kanıtı TESLIM.txt / teslim paketindedir.
