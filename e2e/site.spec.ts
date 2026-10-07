@@ -1,6 +1,8 @@
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { writeFileSync } from "node:fs";
+const production = process.env.TEST_BASE_URL?.startsWith("https://") ?? false;
+const environment = production ? "Vercel production / real Supabase Postgres" : "Next.js local / real Supabase Postgres";
 const description = "Kurgusal test kurumunun internete açık dijital varlıklarını değerlendirmek istiyoruz.";
 async function open(page: Page) { await page.goto("/"); await page.waitForLoadState("networkidle"); }
 async function fill(page: Page) {
@@ -17,7 +19,7 @@ for (const width of [320, 390, 768, 1440]) test(`responsive layout at ${width}px
   await page.getByRole("link", { name: "İletişime geç" }).click();
   await expect(page.getByRole("button", { name: "Talep gönder" })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
-  if (width === 390 || width === 1440) await page.screenshot({ path: `evidence/${width === 390 ? "mobile" : "desktop"}.png`, fullPage: true });
+  if (width === 390 || width === 1440) await page.screenshot({ path: `evidence/${production ? "vercel-" : ""}${width === 390 ? "mobile" : "desktop"}.png`, fullPage: true });
 });
 test("client validation blocks network request and focuses first invalid field", async ({ page }) => {
   await open(page); let posts = 0; page.on("request", req => { if (req.url().includes("/api/requests")) posts++; });
@@ -40,7 +42,7 @@ test("loading state locks resubmission and success follows real API response", a
   const payload = response.request().postDataJSON(); expect(body.id).toBe(payload.requestId);
   await expect(page.getByText("Talebiniz kaydedildi.", { exact: true })).toBeVisible(); expect(posts).toBe(1);
   await expect(page.getByLabel(/Ad soyad/)).toHaveValue("");
-  writeFileSync("evidence/local-submit.json", JSON.stringify({ environment: "Next.js local / real Supabase Postgres", id: body.id, status: response.status(), payload }, null, 2));
+  writeFileSync(production ? "evidence/vercel-submit.json" : "evidence/local-submit.json", JSON.stringify({ environment, id: body.id, status: response.status(), payload }, null, 2));
   await page.screenshot({ path: "evidence/form-success.png", fullPage: false });
 });
 test("503 response preserves input and cannot display success", async ({ page }) => {
@@ -108,7 +110,7 @@ test("lost response after real commit retries as one persisted request", async (
   const response = await retried; expect(response.status()).toBe(200);
   const body = await response.json(); expect(body).toEqual({ id: savedId, replayed: true });
   await expect(page.getByText("Talebiniz kaydedildi.", { exact: true })).toBeVisible();
-  writeFileSync("evidence/lost-response.json", JSON.stringify({ environment: "Next.js local / real Supabase Postgres", id: savedId, retryStatus: response.status(), replayed: body.replayed }, null, 2));
+  writeFileSync(production ? "evidence/vercel-lost-response.json" : "evidence/lost-response.json", JSON.stringify({ environment, id: savedId, retryStatus: response.status(), replayed: body.replayed }, null, 2));
 });
 test("15 second timeout reports uncertainty and preserves user input", async ({ page }) => {
   await open(page); await fill(page);

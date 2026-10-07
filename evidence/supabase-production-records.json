@@ -1,0 +1,55 @@
+{
+  "environment": "Vercel production / real Supabase Postgres",
+  "project": "mbdmnoxndsiopwfyxgva",
+  "table": "vanta_service_requests",
+  "httpRows": [
+    {
+      "id": "f8b91b0a-017b-44b4-94b2-8f005e26f8d9",
+      "name": "Ece Canlı Test",
+      "email": "ece-live@example.com",
+      "service": "risk-mapping",
+      "description": "Tamamen kurgusal Vercel ve Supabase teslim testi için dijital varlık ve risk haritalama hizmetini değerlendirmek istiyoruz.",
+      "created_at": "2026-10-07 21:43:55.042488+00",
+      "record_count": 1
+    },
+    {
+      "id": "fcaa7ee3-56dd-4ebd-af21-3041cbaa6669",
+      "name": "Paralel Test",
+      "email": "parallel-test@example.com",
+      "service": "risk-mapping",
+      "description": "Tamamen kurgusal Vercel ve Supabase teslim testi için dijital varlık ve risk haritalama hizmetini değerlendirmek istiyoruz.",
+      "created_at": "2026-10-07 21:43:58.653299+00",
+      "record_count": 1
+    }
+  ],
+  "browserRows": [
+    {
+      "id": "07d8af98-414c-4ea1-9afe-187e0ee79d3d",
+      "name": "Deniz Örnek",
+      "email": "deniz@example.com",
+      "service": "attack-surface",
+      "description": "Kurgusal test kurumunun internete açık dijital varlıklarını değerlendirmek istiyoruz.",
+      "created_at": "2026-10-07 21:44:33.380427+00",
+      "record_count": 1
+    },
+    {
+      "id": "340b7d56-2c92-4607-8339-1edf702b3d52",
+      "name": "Deniz Örnek",
+      "email": "deniz@example.com",
+      "service": "attack-surface",
+      "description": "Kurgusal test kurumunun internete açık dijital varlıklarını değerlendirmek istiyoruz.",
+      "created_at": "2026-10-07 21:44:15.010734+00",
+      "record_count": 1
+    }
+  ],
+  "roles": [
+    {
+      "relrowsecurity": true,
+      "anon_read": false,
+      "anon_insert": false,
+      "auth_read": false,
+      "auth_insert": false
+    }
+  ],
+  "verification": "Independent Supabase SQL read; each fixture has one row; all four visitor fields and created_at checked."
+}
