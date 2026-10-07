@@ -48,3 +48,11 @@ next-env.d.ts
 /.test-results/
 /playwright-report/
 *.tsbuildinfo
+
+!.env.example
+/supabase/.temp/
+
+.vercel
+.env*
+
+!.env.example

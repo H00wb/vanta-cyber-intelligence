@@ -1,5 +1,4 @@
-import { env } from "cloudflare:workers";
-export function getRequestDatabase(): D1Database {
-  if (!env.DB) throw new Error("D1 database binding unavailable");
-  return env.DB;
+import { createSupabaseStore } from "../lib/supabase-store";
+export function getRequestDatabase() {
+  return createSupabaseStore(process.env.SUPABASE_URL ?? "", process.env.SUPABASE_PUBLISHABLE_KEY ?? "");
 }

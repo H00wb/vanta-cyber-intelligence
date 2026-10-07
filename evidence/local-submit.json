@@ -1,12 +1,12 @@
 {
-  "environment": "local D1 preview",
-  "id": "087f3e01-336c-429e-a0dc-78e992879895",
+  "environment": "Next.js local / real Supabase Postgres",
+  "id": "3e3d4b5a-aef6-43d5-84bc-313408fe127b",
   "status": 201,
   "payload": {
     "name": "Deniz Örnek",
     "email": "deniz@example.com",
     "service": "attack-surface",
     "description": "Kurgusal test kurumunun internete açık dijital varlıklarını değerlendirmek istiyoruz.",
-    "requestId": "087f3e01-336c-429e-a0dc-78e992879895"
+    "requestId": "3e3d4b5a-aef6-43d5-84bc-313408fe127b"
   }
 }

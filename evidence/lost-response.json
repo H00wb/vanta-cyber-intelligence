@@ -1,6 +1,6 @@
 {
-  "environment": "local D1 preview",
-  "id": "c4a65dd0-b9bc-4469-96b0-2174d12f6666",
+  "environment": "Next.js local / real Supabase Postgres",
+  "id": "78aab0a3-1458-4c92-818f-d54f6181e564",
   "retryStatus": 200,
   "replayed": true
 }

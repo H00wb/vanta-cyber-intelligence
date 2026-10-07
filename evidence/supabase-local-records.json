@@ -1,0 +1,32 @@
+{
+  "environment": "Next.js local production build / real Supabase Postgres",
+  "project": "mbdmnoxndsiopwfyxgva",
+  "table": "vanta_service_requests",
+  "rows": [
+    {
+      "id": "3e3d4b5a-aef6-43d5-84bc-313408fe127b",
+      "name": "Deniz Örnek",
+      "email": "deniz@example.com",
+      "service": "attack-surface",
+      "description": "Kurgusal test kurumunun internete açık dijital varlıklarını değerlendirmek istiyoruz.",
+      "created_at": "2026-10-07 21:36:54.588935+00"
+    },
+    {
+      "id": "78aab0a3-1458-4c92-818f-d54f6181e564",
+      "name": "Deniz Örnek",
+      "email": "deniz@example.com",
+      "service": "attack-surface",
+      "description": "Kurgusal test kurumunun internete açık dijital varlıklarını değerlendirmek istiyoruz.",
+      "created_at": "2026-10-07 21:37:09.803727+00"
+    }
+  ],
+  "roles": [
+    {
+      "relrowsecurity": true,
+      "anon_read": false,
+      "anon_insert": false,
+      "auth_read": false,
+      "auth_insert": false
+    }
+  ]
+}
