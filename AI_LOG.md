@@ -81,16 +81,6 @@ Canlı ortam sonuçlarını yerel testten türetmedim. İlk sürümün productio
 
 İlk çalışma başlangıcını 7 Ekim 2026 23:26:15 (Europe/Istanbul) olarak kaydettim. Tamamlanma ve süre dış teslim kaydında belirtilir. Hedef 3–4 saat emek harcanmış gibi göstermiyorum. Geçmiş proje ve bireysel katkı için daha sonra BiLSTM repo bağlantımı ve model/kod yazarlığı beyanımı paylaştım.
 
-## 7. Geçmiş projem ve ilk sürümün yayın erişimi
-
-İlk canlı sitenin herkese açık olmasını açıkça onayladım. Varsayılan özel erişim bu onaydan sonra public olarak değiştirildi; ziyaretçilere kayıtları açan bir endpoint eklemedik.
-
-Geçmiş çalışmam için https://github.com/H00wb/Music-Generation-Using-BiLSTM bağlantısını ve “modeli oluşturup kendim yazmıştım” kişisel katkı beyanımı paylaştım. Research agent GitHub REST API ile README, notebook hücreleri, dosya ağacı ve commit geçmişini salt okunur inceledi. BiLSTM/MIDI iş akışı kaynakta görüldü; model notebook'u/ağırlıklarını ekleyen commit `52a7700afe4ced82f8c3631609a1633e10340ef0` ve H00wb hesabımın görünen commitleri referanslandı.
-
-Kişisel beyanımı, repodaki artifact'leri ve bu oturumda yeniden çalıştırılmamış geçmiş sonuçları ayırıyorum. Repo commitlerini tüm kodun bağımsız özgün yazımını tek başına kanıtlayan bir belge olarak sunmuyorum. Geçmiş repoyu bu case kapsamında değiştirmedik veya modeli yeniden eğitmedik.
-
-İlk Site yayın paketi için Windows'un WSL Bash'i Windows yollarını doğru çözümleyemedi. Codex kurulu Git Bash'i seçti; GNU tar'ın sürücü harfini uzak host sanması `TAR_OPTIONS=--force-local` ile giderildi. Bu ayarlar yalnız yayın sürecinin ortamında kullanıldı; uygulama davranışını değiştirmedi.
-
 ## 8. İlk D1/Sites sürümünün canlı doğrulaması
 
 İlk sürüm Sites üzerinde başarıyla yayımlandı. Yayın URL'si kayıt sırasında öngörülen domain'den farklı döndüğü için başarılı deployment'ın döndürdüğü URL'yi esas aldık. İlk sürümün canlı adresi https://vanta-cyber-intelligence.emrehanh00wb.chatgpt.site idi; bu adresin doğrulamasını Supabase/Vercel yayınıyla karıştırmıyorum.
