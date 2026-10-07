@@ -4,16 +4,6 @@ Bu belgede VANTA case study'sindeki kararlarımı, AI ile iş paylaşımımı ve
 
 D1/Sites ile hazırlanan ilk sürümün sonuçlarını aşağıda tarihsel kayıt olarak koruyorum. Sonraki Supabase, Vercel ve GitHub geçişinin uygulama ve doğrulama durumunu ayrı bölümde izliyorum. İlk sürümün başarılı testlerini yeni altyapının doğrulanmış sonucu olarak kullanmıyorum.
 
-## Kapsam ve sorumluluğum
-
-VANTA için sıfırdan hizmet landing page'i, sunucuda kalıcı talep kaydı, değerlendirme gereksinimlerini açıklayan teslim belgeleri ve bir TXT test yönergesi istedim. Kapsamı hizmetin anlatılması ve ziyaretçi talebinin kayda dönüşmesiyle sınırladım. Mevcut görsel tasarımın yeni altyapıya geçişte korunmasını da istedim.
-
-Bu oturumdaki doğrulanabilir katkım hizmet brief'i, değerlendirme ölçütleri, kapsam, yönlendirmeler ve profesyonel/teknik belge beklentisidir. Tasarım, uygulama ve test kodunu Codex desteğiyle ürettim; AI katkısını görev ve kanıt bazında aşağıda kaydettim. Teknik kararları gerekçeleri ve izlenebilir sonuçlarıyla kaydediyorum.
-
-İlk sürümde kullanılan araçlar: Codex, PowerShell/Node.js, OpenAI Sites starter ve hosting, ImageGen, TypeScript, Node test runner + SQLite, Playwright Chromium, axe-core, Drizzle ve Wrangler D1. Git, kesin kaynak durumu ve teslim commit'i için kullanıldı. Yeni geçişte Supabase, Vercel CLI ve GitHub/Git kullandım; tamamlanmış işlemleri ve kanıtlarını 9. bölümde kaydettim.
-
-Uygulama runtime'ında OpenAI/LLM çağrısı yoktur. Bu sohbetin ve ImageGen'in model sampling/temperature ayarlarına erişemedim; temperature=0 kullanıldığını iddia etmiyorum.
-
 ## AI ile iş paylaşımım
 
 - Ana Codex agent'i: ilk sürümün Site yaşam döngüsü, kapsamın teknik karşılığı, sayfa/API/şema, test kodu, entegrasyon, belgeler ve yayın. Yeni altyapı geçişini de ana agent yürüttü.
@@ -31,7 +21,7 @@ Codex ile Türkçe içerik ürettim; İngilizce marka sloganını korudum. İçe
 
 İlk sürümde Codex 320–1440 px responsive ölçümleri, masaüstü/mobil screenshot incelemesini, CTA anchor'larını, görünür formu ve başlıkları kontrol etti. Hero 1254×1254 PNG'den 1000×1000 WebP'ye çevrildi (yaklaşık 97 KB). Bu görseli gerçek güvenlik verisi veya telemetri olarak sunmuyorum.
 
-## 2. Sunucunun doğruluk sınırı — ilk D1/Sites sürümü
+## 2. Sunucunun doğruluk sınırı — ilk site sürümü
 
 Ziyaretçi talebinin yalnız arayüzde başarı gösteren bir demo olmamasını istedim. İlk sürümde AI ile geliştirilen çözümde Cloudflare D1'i kalıcı kayıt kaynağı olarak kullandık. Browser storage veya process belleğini ürün kaydı için kullanmadık. Drizzle versionlanan şema/migration üretirken runtime sorguları D1 prepared statement ve bound parametrelerle çalıştı. Aynı alan kurallarını istemci ve sunucuda uyguladık; sunucu kontrolünü zorunlu tuttuk.
 
