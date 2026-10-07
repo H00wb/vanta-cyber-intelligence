@@ -2,9 +2,9 @@
 
 Siber güvenlik ve BT ekiplerinin hizmeti anlamasını ve dört hizmetten biri için talep oluşturmasını sağlayan responsive landing page. Form, sunucu doğrulamasından sonra Cloudflare D1 veritabanına kalıcı kayıt yazar. Gerçek bir tehdit analizi motoru veya güvenlik operasyon sistemi uygulanmamıştır; değerlendirme kapsamı hizmet sitesi ve talep kaydıdır.
 
-Canlı adres: https://vanta-cyber-intelligence.snappy-mite-0846.chatgpt.site
+Canlı adres: https://vanta-cyber-intelligence.emrehanh00wb.chatgpt.site
 
-Bu adresin yayın ve erişim durumu `evidence/production-verification.json` ve teslimin yanındaki `TESLIM.txt` içinde belirtilir. Teslim commit kimliği `TESLIM.txt` ve `git rev-parse HEAD` ile alınır. SHA'nın kendi commit'inin içinde yazılması döngü oluşturacağından dış teslim kaydında tutulur.
+Site herkese açık yayımlandı; giriş gerektirmeyen sayfa 200 döndü. Bu adresin yayın ve erişim durumu `evidence/production-verification.json` ve teslimin yanındaki `TESLIM.txt` içinde belirtilir. Teslim commit kimliği `TESLIM.txt` ve `git rev-parse HEAD` ile alınır. SHA'nın kendi commit'inin içinde yazılması döngü oluşturacağından dış teslim kaydında tutulur.
 
 ## Kurulum
 
@@ -86,7 +86,21 @@ Uygulama LLM çağrısı yapmaz. Bu sohbetin ve ImageGen'in model sampling/tempe
 - E-posta biçimi kontrol edilir; adresin teslim alabilirliği doğrulanmaz.
 - Chromium otomasyonu ve responsive kontroller çalıştırıldı; gerçek iOS/Safari/Firefox cihazları ve ekran okuyucu ile manuel deneme yapılmadı.
 - Vinext 1.0.0-beta.5 starter tarafından kullanılır. Framework bağımlılığı ve beta durumu açıkça belirtilir.
-- Kullanıcının geçmiş projeleri ve o projelerdeki bireysel katkısı paylaşılmadı. İlgili 5 puan için gerçek portfolyo/katkı kanıtı ayrıca sağlanmalıdır; uydurulmamıştır.
+- Geçmiş proje kanıtı aşağıdadır. Repo statik incelendi; model bu case sırasında yeniden eğitilmedi, performans iddiası yeniden doğrulanmadı.
 - Nihai puan değerlendirme ekibine aittir. Gereksinim/kanıt matrisi `DEGERLENDIRME.md` içindedir; hiçbir skor garanti edilmez.
 
 Teslim penceresi başlangıcı: 7 Ekim 2026 23:26:15 (Europe/Istanbul). 24 saatlik pencere sonu: 8 Ekim 2026 23:26:15. Gerçek oturum süresi ve tamamlanma saati dış teslim kaydında yazılır; 3–4 saat emek harcanmış gibi gösterilmez.
+## Geçmiş proje ve kişisel katkı
+
+[Music Generation Using BiLSTM](https://github.com/H00wb/Music-Generation-Using-BiLSTM), İstanbul Kültür Üniversitesi CSE0471 Applied Deep Learning ders projesidir. Adayın kişisel katkı beyanı: model mimarisini oluşturdu ve kodunu kendisi yazdı.
+
+Repoda MIDI verisinden music21 ile nota/akor çıkarımı, 100 adımlık sekans hazırlama, TensorFlow/Keras ile 64 → 128 → 64 birimli Bidirectional LSTM katmanları, regularization/eğitim callback'leri ve MIDI üretimi notebook üzerinden incelenebilir. Model ağırlıkları, grafikleri, örnek MIDI çıktıları ve rapor da bulunur. [Model ve notebook'u ekleyen commit](https://github.com/H00wb/Music-Generation-Using-BiLSTM/commit/52a7700afe4ced82f8c3631609a1633e10340ef0) ve [commit geçmişi](https://github.com/H00wb/Music-Generation-Using-BiLSTM/commits/main/) H00wb hesabındaki katkıları gösterir.
+
+Bu geçmiş çalışma, VANTA'nın koduna bağımlılık olarak eklenmedi. Bu oturumda notebook çalıştırılmadı veya model yeniden eğitilmedi; hesap commitleri tek başına kaynak kodun tümünün bağımsız özgün yazımını kanıtlayan bir iddia olarak kullanılmaz.
+## Canlı kayıt kanıtı
+
+7 Ekim 2026 23:58:20 (Europe/Istanbul) canlı HTTP doğrulaması: anonim landing page 200, yeni talep 201, aynı talebin tekrarı 200/replayed, geçersiz e-posta 422. Kurgusal canlı test kaydı: `2da4c6b3-0b58-4524-bdd1-fb0fba2bb1f8`. Sites veritabanı okuma aracıyla DB/service_requests tablosunda aynı UUID, dört alan ve created_at bağımsız olarak doğrulandı. `evidence/production-verification.json` sonuçları ve gerçek satırı içerir.
+
+Tek kurgusal talep oluşturup HTTP davranışını yeniden sınamak için `node scripts/verify-production.mjs https://vanta-cyber-intelligence.emrehanh00wb.chatgpt.site` kullanılabilir. Script sonucu HTTP kanıtıdır; bağımsız canlı DB okumasını tek başına gerçekleştirmez. WebP üretimde application/octet-stream etiketiyle sunuluyor; asset'in byte içeriği kaynak dosyayla birebir doğrulandı. Platform MIME etiketi gerçek görsel varlığının kanıtı yerine kullanılmadı.
+
+Kaynak için teslimle birlikte `VANTA_KAYNAK.zip` paylaşılır. Arşiv `git archive` ile teslim commit'inin izlenen dosyalarından oluşturulur; node_modules, yerel DB state ve kimlik bilgileri içermez. Değerlendirici kaynak kodu herkese açık GitHub reposu olmadan bu arşivden inceleyebilir. ZIP'in kendisine erişim için dosyanın değerlendirme kanalına eklenmesi gerekir.

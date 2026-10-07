@@ -40,7 +40,7 @@ Amaç: mesajın gerçekten bilinen sonucu ifade etmesi.
 
 Karar: INSERT await edilmeden başarı dönülmez. UI yalnız 200/201 ve beklenen kayıt UUID'siyle eşleşen geçerli JSON yanıtında başarı gösterir. Ağ kesilmesi ve 15 saniye zaman aşımında sonucu kesin olarak bilemediğimiz için “Gönderim doğrulanamadı” kullanılır; girdiler korunur.
 
-Gerekçe: sunucu kayıt yapmış fakat yanıt kaybolmuş olabilir. Aynı değişmemiş gönderim için UUID korunur. Birincil anahtar + ON CONFLICT ile aynı kimlik/same veri bir satır kalır; farklı veri 409 üretir. E-posta üzerinden global uniqueness uygulanmadı; aynı kişi farklı ihtiyacı için tekrar talep gönderebilir.
+Gerekçe: sunucu kayıt yapmış fakat yanıt kaybolmuş olabilir. Aynı değişmemiş gönderim için UUID korunur. Birincil anahtar + ON CONFLICT ile aynı kimlik/aynı veri bir satır kalır; farklı veri 409 üretir. E-posta üzerinden global uniqueness uygulanmadı; aynı kişi farklı ihtiyacı için tekrar talep gönderebilir.
 
 Doğrulama: commit bekleme; paralel aynı kimlik; farklı veriyle kimlik çakışması; 503 ve yanlış yanıt ID'sinde başarı olmaması; gerçek kayıt sonrası response kaybı ve 200 replay; offline ve timeout senaryoları. Yerel D1'de response kaybı testinin tek satır bıraktığı bağımsız okunarak doğrulandı.
 
@@ -70,6 +70,26 @@ Windows npm shim çözümlemesi Sites helper çağrılarında yanlış konumdan 
 - Kayıt sonrası yanıt kaybı test kimliği `c4a65dd0-b9bc-4469-96b0-2174d12f6666`; tekrar isteği 200/replayed verdi ve tek D1 satırı doğrulandı.
 - Test verisi tüm senaryolarda kurgusaldır. Hata simülasyonu kullanılan tarayıcı senaryoları gerçek depolama testlerinden ayrı adlandırıldı.
 
-Canlı ortama ilişkin sonuçlar yerel testten türetilmez. Canlı yayın/kayıt doğrulaması tamamlandığında bu bölüm gerçek kanıtla güncellenecektir.
+Canlı ortama ilişkin sonuçlar yerel testten türetilmedi; aşağıdaki ayrı production HTTP ve D1 kontrolü gerçekleştirildi.
 
-Başlangıç: 7 Ekim 2026 23:26:15 (Europe/Istanbul). Gerçek tamamlanma ve süre dış teslim kaydında belirtilir. Hedef 3–4 saat emek harcanmış gibi gösterilmez; geçmiş proje ve bireysel katkı bölümü için kullanıcıdan doğrulanabilir bilgi beklenir.
+Başlangıç: 7 Ekim 2026 23:26:15 (Europe/Istanbul). Gerçek tamamlanma ve süre dış teslim kaydında belirtilir. Hedef 3–4 saat emek harcanmış gibi gösterilmez; geçmiş proje ve bireysel katkı için kullanıcı sonradan BiLSTM repo bağlantısı ve model/kod yazarlığı beyanı sağladı.
+## 7. Geçmiş proje kanıtı ve yayın erişimi
+
+Kullanıcı canlı sitenin herkese açık olmasını açıkça onayladı. Varsayılan özel erişim bu onaydan sonra public olarak değiştirildi; kayıtları ziyaretçilere açan bir endpoint eklenmedi.
+
+Kullanıcı https://github.com/H00wb/Music-Generation-Using-BiLSTM bağlantısını ve “modeli oluşturup kendim yazmıştım” kişisel katkı beyanını paylaştı. Research agent GitHub REST API ile README, notebook hücreleri, dosya ağacı ve commit geçmişini salt okunur inceledi. BiLSTM/MIDI iş akışı kaynakta görüldü; model notebook'u/ağırlıklarını ekleyen commit `52a7700afe4ced82f8c3631609a1633e10340ef0` ve H00wb hesabının görünen commitleri referanslandı. Kullanıcı beyanı, repo artefact'leri ve bu oturumda yeniden çalıştırılmamış geçmiş sonuçlar birbirinden ayrıldı. Geçmiş repo değiştirilmedi.
+
+Yayın paketi için Windows'un WSL Bash'i Windows yollarını doğru çözümlemedi. Kurulu Git Bash seçildi; GNU tar'ın sürücü harfini uzak host sanması `TAR_OPTIONS=--force-local` ile giderildi. Bu ayarlar yalnız yayın sürecinin ortamında kullanıldı, uygulama davranışını değiştirmedi.
+## 8. Canlı doğrulama
+
+İlk sürüm Sites üzerinde başarıyla yayımlandı. Gerçek yayın URL'si kayıt sırasında öngörülen domain'den farklı döndüğü için dönen başarılı deployment URL'si esas alındı; README bu adresle güncellendi.
+
+İlk canlı smoke kontrolü, WebP yanıtı application/octet-stream etiketli olduğu için katı MIME varsayımında durdu. Asset 200 ve 97.416 byte olarak sunuluyordu. Kontrol, kaynak WebP dosyasının byte içeriğiyle birebir eşleşme şartına çevrildi; bu, yanlış MIME etiketi yüzünden gerçek dosyayı yok saymak yerine içeriği doğrular. İlk duruş kayıt oluşturmadan gerçekleşti. Platform MIME sınırlaması README'de belirtildi.
+
+Gerçek canlı kontrol 2026-10-07T20:58:20Z'de tamamlandı: anonim sayfa 200, kaynakla eşleşen hero 200, POST 201, aynı UUID ve veri için 200/replayed, geçersiz e-posta için 422. Test verisi Ece Test / ece-test@example.com / risk-mapping ve kurgusal açıklamadır.
+
+Bağımsız Sites `read_database_overview` ve `read_database_table_rows` ile DB/service_requests satırı okundu. UUID `2da4c6b3-0b58-4524-bdd1-fb0fba2bb1f8`, isim/e-posta/hizmet/açıklama ve created_at gönderimle eşleşti. Bu kontrol sunucu yanıtına körlemesine güvenmekten ayrı bir kalıcılık kanıtıdır. `evidence/production-verification.json` hem HTTP durumlarını hem doğrulanmış satırı saklar.
+
+Son güvenlik kontrolünde formun native method'u açıkça POST yapıldı; JavaScript devre dışıysa alanlar GET query string'ine taşınmaz. Zengin alan doğrulaması ve arayüz durumları JavaScript gerektirir; uygulama no-JS talebini JSON endpoint'i üzerinden başarılıymış gibi sunmaz.
+
+Son kaynak arşivi Git'in izlenen dosyalarından üretilecek; kesin teslim commit'i, son yayın sonucu, son canlı satırın korunması ve gerçek toplam oturum süresi `TESLIM.txt` içinde verilecektir. Hedef emek süresi veya garanti değerlendirme puanı uydurulmadı.

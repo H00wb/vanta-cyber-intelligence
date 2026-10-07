@@ -48,7 +48,7 @@ export default function RequestForm() {
   }
   const submitting = status === "submitting";
   return (
-    <form onSubmit={submit} noValidate className="request-form" aria-busy={submitting}>
+    <form method="post" action="/api/requests" onSubmit={submit} noValidate className="request-form" aria-busy={submitting}>
       <div className="form-heading"><span className="eyebrow">TALEP FORMU</span><ShieldCheck size={22} aria-hidden="true" /></div>
       <h3>İlk adımı birlikte atalım.</h3><p className="form-intro">İhtiyacınızı anlatın, doğru hizmeti birlikte belirleyelim.</p>
       <fieldset disabled={submitting}><legend className="sr-only">Hizmet talebiniz</legend>

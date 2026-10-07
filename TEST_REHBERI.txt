@@ -80,3 +80,6 @@ Hata mesajında SQL, stack trace veya gizli anahtar olmamalı. Test başarılı 
 - Kullanılan starter/AI katkısı ve bilinen sınırlar açık mı?
 - Gerçek geçmiş proje/kişisel katkı kanıtı eklendi mi? Bu bilgi yoksa 5 puan garanti kabul edilmemeli.
 Bu liste puan garantisi değildir; kontrol edilebilir teslim şartlarını gösterir.
+CANLI ADRES: https://vanta-cyber-intelligence.emrehanh00wb.chatgpt.site
+DOĞRULANMIŞ CANLI KAYIT: 2da4c6b3-0b58-4524-bdd1-fb0fba2bb1f8
+Kaynak ve commit paylaşımı için teslimin yanındaki TESLIM.txt ve VANTA_KAYNAK.zip dosyalarını kullan.
