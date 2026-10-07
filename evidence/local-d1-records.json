@@ -1,0 +1,22 @@
+{
+  "checkedAt": "2026-10-07T20:45:28.249Z",
+  "database": "local Cloudflare D1",
+  "verifiedRows": [
+    {
+      "id": "087f3e01-336c-429e-a0dc-78e992879895",
+      "name": "Deniz Örnek",
+      "email": "deniz@example.com",
+      "service": "attack-surface",
+      "description": "Kurgusal test kurumunun internete açık dijital varlıklarını değerlendirmek istiyoruz.",
+      "created_at": "2026-10-07T20:42:31.257Z"
+    },
+    {
+      "id": "c4a65dd0-b9bc-4469-96b0-2174d12f6666",
+      "name": "Deniz Örnek",
+      "email": "deniz@example.com",
+      "service": "attack-surface",
+      "description": "Kurgusal test kurumunun internete açık dijital varlıklarını değerlendirmek istiyoruz.",
+      "created_at": "2026-10-07T20:44:31.916Z"
+    }
+  ]
+}

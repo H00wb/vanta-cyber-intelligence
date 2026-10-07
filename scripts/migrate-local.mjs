@@ -1,0 +1,13 @@
+import "./sites-env.mjs";
+import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import path from "node:path";
+import { spawnSync } from "node:child_process";
+const root = process.cwd();
+const built = JSON.parse(readFileSync("dist/server/wrangler.json", "utf8"));
+if (!built.d1_databases?.length) throw new Error("Build with a D1 binding first.");
+mkdirSync(".sites-runtime", { recursive: true });
+const config = path.join(root, ".sites-runtime/local-d1.json");
+writeFileSync(config, JSON.stringify({ name: "vanta-local", compatibility_date: built.compatibility_date, d1_databases: built.d1_databases.map(db => ({ ...db, migrations_dir: path.join(root, "drizzle") })) }));
+const child = spawnSync(process.execPath, ["--import", "./scripts/sites-env.mjs", "./node_modules/wrangler/bin/wrangler.js", "d1", "migrations", "apply", "DB", "--local", "--config", config, "--persist-to", ".wrangler/state"], { stdio: "inherit", env: { ...process.env, CI: "true" } });
+if (child.error) throw child.error;
+process.exit(child.status ?? 1);

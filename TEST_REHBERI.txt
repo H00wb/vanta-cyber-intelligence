@@ -1,0 +1,82 @@
+VANTA — TEKRARLANABİLİR TEST REHBERİ
+
+Tüm veriler kurgusal olmalıdır. Gerçek kişi e-postası, şirket varlığı, parola veya erişim anahtarı kullanma. Örnek veri: Deniz Örnek / deniz@example.com / Attack Surface Management / Kurgusal kurumun internete açık test varlıklarını değerlendirmek istiyoruz.
+
+1. YEREL ORTAMI HAZIRLA
+Node.js 24 LTS kurulu olsun. Terminali vanta klasöründe aç.
+  npm ci
+  npm run build
+  npm run db:migrate
+  npm run dev -- --port 5173 --hostname 127.0.0.1
+Son komut açık kalsın. Tarayıcıda http://127.0.0.1:5173/ aç.
+Build hata verirse testler geçti deme; hatayı çözmeden sonraki adıma geçme.
+D1 verisi .wrangler/state içinde kalır. Bu dizini silme.
+
+2. OTOMATİK KONTROLLER
+İkinci terminali aynı klasörde aç.
+  npm test
+  npm run typecheck
+  npx playwright install chromium
+  npm run test:e2e
+  node scripts/verify-local-record.mjs
+Beklenen: 28 Node testi, 15 Chromium senaryosu başarılı; TypeScript hatası yok; son komut iki kanıt kimliği için tam birer D1 satırı ve doğru alanlar bildirir. İlk teslimde tarayıcı raporları 13+2 ayrı koşu halinde kaydedildi. Sen tam suite çalıştırınca yeni rapor 15 senaryonun tamamını içerir.
+Tarayıcı testleri kurgusal kayıt oluşturur; varsayılan hedef yereldir. Canlı URL'yi TEST_BASE_URL olarak ayarlayıp suite'i tekrar tekrar çalıştırma.
+Raporlar: evidence/unit-tests.tap, browser-results.json, browser-edge-results.json, local-submit.json, local-d1-records.json. Tarayıcı testleri çalıştırıldığında JSON/görseller güncellenir; eski raporla yeni çalışma sonucu birbirine karıştırılmamalı.
+
+3. MANUEL BAŞARILI FORM
+- İletişime geç veya ana CTA'ya tıkla; talep formuna gitmeli.
+- Dört alanı yukarıdaki kurgusal veriyle doldur.
+- Talep gönder'e tıkla. İstek sürerken “Gönderiliyor…” ve kapalı buton görünmeli.
+- Başarıda “Talebiniz kaydedildi” ve UUID kayıt no görünmeli; alanlar temizlenmeli.
+- DevTools > Network > /api/requests yanıtı: yeni kayıtta 201, JSON id arayüzdeki kayıt no ile aynı.
+- E-posta gönderildi, tehdit analizi başladı gibi yapılmayan bir işlemin mesajı görünmemeli.
+
+4. SUNUCUDA GERÇEK KAYDI GÖR
+Yerel tarayıcı otomasyonunun kaydı için scripts/verify-local-record.mjs yukarıda bağımsız D1 kontrolü yapar. Kendi manuel kaydını kontrol etmek için Network/ekrandan UUID'yi al ve şu komutu UUID yerine gerçek test kimliği yazarak çalıştır:
+  node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --command "SELECT id,name,email,service,description,created_at FROM service_requests WHERE id='UUID'"
+Beklenen: tam bir satır, dört alan form ile aynı, sunucu created_at dolu. local flag canlı veritabanını sorgulamaz.
+Sunucuyu durdurup tekrar npm run dev ile başlat, aynı SELECT'i tekrarla. Satır korunmalı. Yalnız sayfayı yenilemek kalıcı sunucu kaydının kanıtı değildir.
+Canlı kayıt için Sites > Site ayarları > Database görüntüleyicisinde DB / service_requests tablosunu aç. evidence/production-verification.json içindeki UUID ile gerçek satırı karşılaştır. Değerlendiriciye veritabanı yetkisi vermek yerine yalnız kurgusal satırın kanıtını paylaşabilirsin. Ziyaretçilere kayıtları okutan bir endpoint yoktur.
+
+5. İSTEMCİ DOĞRULAMASI
+- Tüm alanlar boşken gönder: dört alan için hata; ilk alan odaklanır; Network'te POST oluşmaz.
+- Yalnız boşluk isim, geçersiz e-posta, seçilmemiş hizmet, 20 karakterden kısa açıklama ile dene.
+- Hatalar ilgili alanla ilişkilendirilmeli; başarı görünmemeli.
+- Bir emoji isim veya 10 emoji açıklama kısa sayılmalı. İki emoji isim / 20 emoji açıklama ortak sınırlarla tutarlıdır; bu Unicode durumları otomatik testte de bulunur.
+
+6. SUNUCU DOĞRULAMASINI ATLATMAYI DENE
+Tarayıcı doğrulamasını değiştirmek sunucu kurallarını aşamaz. Otomatik tests/request.test.mjs ve e2e/site.spec.ts doğrudan POST ile bunu sınar. İstersen yerel sayfada DevTools Console'da kurgusal örneği çalıştır:
+  fetch('/api/requests', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:'Deniz Örnek',email:'gecersiz',service:'bilinmeyen',description:'kısa',requestId:crypto.randomUUID()})}).then(async r => console.log(r.status, await r.json()))
+Beklenen: 422 ve alan hataları. Yeni kayıt oluşmaz.
+Bozuk JSON → 400; yanlış Content-Type → 415; 16 KiB üstü gerçek gövde → 413; farklı Origin → 403; GET → 405. Bunlar Node suite'te ayrı senaryolardır.
+
+7. GÖNDERİLİYOR / ÇİFT TIK / TEKRAR GÖNDERİM
+DevTools Network'te Slow 3G seç; doldur ve gönder. İstek sürerken alanlar/buton kilitli olmalı. İkinci tık yeni istek çıkarmamalı.
+Aynı requestId ve aynı normalize veriyle yeniden POST: 200 ve replayed=true, aynı id, toplam tek satır.
+Aynı id ve farklı içerik: 409; ilk kayıt değişmez.
+Bu iki sunucu durumu ve kayıt tamamlandıktan sonra yanıt kaybı otomatik testte gerçek SQL/D1 ile kontrol edilir.
+
+8. BAĞLANTI / SUNUCU HATASI
+- Sayfa yüklendikten sonra Network > Offline aç ve formu gönder.
+- “Gönderim doğrulanamadı” görünmeli; başarı görünmemeli; alanlar dolu kalmalı.
+- Online'a dön; değişmeden yeniden gönderince aynı UUID korunmalı.
+- İstek 15 saniyeyi geçerse belirsizlik mesajı ve tekrar kullanılabilir buton görünmeli.
+Depolama hatası gerçek veritabanını bozarak denenmez: Node testi dependency üzerinden DB hatasını üretir. Tarayıcıdaki 503/HTML yanıtı senaryoları kontrollü response interception'dır. Gerçek uçtan uca kayıt ve yanıt kaybı testleri ayrı tutulur.
+Hata mesajında SQL, stack trace veya gizli anahtar olmamalı. Test başarılı oldu diye ticari kesintilerin tümünün kapsandığı iddia edilmez.
+
+9. MOBİL / ERİŞİLEBİLİRLİK
+- DevTools responsive genişliklerini 320, 390, 768, 1440 px olarak değiştir.
+- Yatay scrollbar, kesilmiş başlık, taşmış form veya erişilemeyen buton olmamalı.
+- Klavyede ilk Tab “İçeriğe geç” bağlantısını açmalı; form alanlarında görünür odak olmalı.
+- Label'a tıklayınca ilgili input odaklanmalı; hatalar aria-describedby ile ilgili alana bağlı olmalı.
+- Masaüstünde metni %200 büyüt ve formu kullan. Reduced motion tercihini açıp hareketin azaltıldığını kontrol et.
+- Otomatik axe taramasında sıfır ihlal, bütün erişilebilirlik konularının manuel sertifikasyonu anlamına gelmez. Gerçek ekran okuyucu/iOS/Safari deneyimi ayrıca test edilebilir.
+
+10. SON TESLİM KONTROLÜ
+- Canlı URL başka bir tarayıcı/oturumdan değerlendirici tarafından açılabiliyor mu?
+- Test kaydının UUID'si gerçek canlı D1 satırında var mı?
+- README, AI_LOG.md, TEST_REHBERI.txt ve kanıtlar kaynak arşivinde var mı?
+- TESLIM.txt'deki commit ile git rev-parse HEAD eşleşiyor mu?
+- Kullanılan starter/AI katkısı ve bilinen sınırlar açık mı?
+- Gerçek geçmiş proje/kişisel katkı kanıtı eklendi mi? Bu bilgi yoksa 5 puan garanti kabul edilmemeli.
+Bu liste puan garantisi değildir; kontrol edilebilir teslim şartlarını gösterir.

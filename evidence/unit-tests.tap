@@ -1,0 +1,178 @@
+TAP version 13
+# Subtest: normalizes whitespace and email; accepts every defined service
+ok 1 - normalizes whitespace and email; accepts every defined service
+  ---
+  duration_ms: 2.7099
+  type: 'test'
+  ...
+# Subtest: server rejects blank name before opening database
+ok 2 - server rejects blank name before opening database
+  ---
+  duration_ms: 18.8213
+  type: 'test'
+  ...
+# Subtest: server rejects long name before opening database
+ok 3 - server rejects long name before opening database
+  ---
+  duration_ms: 0.9358
+  type: 'test'
+  ...
+# Subtest: server rejects invalid email before opening database
+ok 4 - server rejects invalid email before opening database
+  ---
+  duration_ms: 1.2153
+  type: 'test'
+  ...
+# Subtest: server rejects long email before opening database
+ok 5 - server rejects long email before opening database
+  ---
+  duration_ms: 0.6515
+  type: 'test'
+  ...
+# Subtest: server rejects unknown service before opening database
+ok 6 - server rejects unknown service before opening database
+  ---
+  duration_ms: 0.7313
+  type: 'test'
+  ...
+# Subtest: server rejects short description before opening database
+ok 7 - server rejects short description before opening database
+  ---
+  duration_ms: 0.6051
+  type: 'test'
+  ...
+# Subtest: server rejects long description before opening database
+ok 8 - server rejects long description before opening database
+  ---
+  duration_ms: 0.5616
+  type: 'test'
+  ...
+# Subtest: server rejects control character before opening database
+ok 9 - server rejects control character before opening database
+  ---
+  duration_ms: 0.5511
+  type: 'test'
+  ...
+# Subtest: server rejects wrong field type before opening database
+ok 10 - server rejects wrong field type before opening database
+  ---
+  duration_ms: 0.587
+  type: 'test'
+  ...
+# Subtest: server rejects invalid request id before opening database
+ok 11 - server rejects invalid request id before opening database
+  ---
+  duration_ms: 0.5497
+  type: 'test'
+  ...
+# Subtest: server rejects one emoji name before opening database
+ok 12 - server rejects one emoji name before opening database
+  ---
+  duration_ms: 0.4655
+  type: 'test'
+  ...
+# Subtest: server rejects ten emoji description before opening database
+ok 13 - server rejects ten emoji description before opening database
+  ---
+  duration_ms: 0.4932
+  type: 'test'
+  ...
+# Subtest: exact character boundaries including astral Unicode reach database
+ok 14 - exact character boundaries including astral Unicode reach database
+  ---
+  duration_ms: 2.4655
+  type: 'test'
+  ...
+# Subtest: missing fields and non-object payloads are rejected
+ok 15 - missing fields and non-object payloads are rejected
+  ---
+  duration_ms: 0.9486
+  type: 'test'
+  ...
+# Subtest: created response matches committed row and four visitor fields
+ok 16 - created response matches committed row and four visitor fields
+  ---
+  duration_ms: 0.7383
+  type: 'test'
+  ...
+# Subtest: success waits for committed INSERT
+ok 17 - success waits for committed INSERT
+  ---
+  duration_ms: 5.7187
+  type: 'test'
+  ...
+# Subtest: same submission retried concurrently creates exactly one row
+ok 18 - same submission retried concurrently creates exactly one row
+  ---
+  duration_ms: 1.255
+  type: 'test'
+  ...
+# Subtest: idempotency key cannot be reused for changed content
+ok 19 - idempotency key cannot be reused for changed content
+  ---
+  duration_ms: 1.2096
+  type: 'test'
+  ...
+# Subtest: SQL and HTML-like input is literal data
+ok 20 - SQL and HTML-like input is literal data
+  ---
+  duration_ms: 0.8088
+  type: 'test'
+  ...
+# Subtest: storage failure has no success or leaked internal error
+ok 21 - storage failure has no success or leaked internal error
+  ---
+  duration_ms: 0.6375
+  type: 'test'
+  ...
+# Subtest: malformed JSON returns 400 without a write
+ok 22 - malformed JSON returns 400 without a write
+  ---
+  duration_ms: 0.503
+  type: 'test'
+  ...
+# Subtest: wrong content type returns 415
+ok 23 - wrong content type returns 415
+  ---
+  duration_ms: 1.1471
+  type: 'test'
+  ...
+# Subtest: cross-origin request is rejected
+ok 24 - cross-origin request is rejected
+  ---
+  duration_ms: 0.6204
+  type: 'test'
+  ...
+# Subtest: body limit uses actual bytes even without Content-Length
+ok 25 - body limit uses actual bytes even without Content-Length
+  ---
+  duration_ms: 0.738
+  type: 'test'
+  ...
+# Subtest: GET cannot read submitted personal data
+ok 26 - GET cannot read submitted personal data
+  ---
+  duration_ms: 0.3795
+  type: 'test'
+  ...
+# Subtest: success gate rejects HTTP errors, missing identity, and mismatched identity
+ok 27 - success gate rejects HTTP errors, missing identity, and mismatched identity
+  ---
+  duration_ms: 0.3096
+  type: 'test'
+  ...
+# Subtest: record survives closing and reopening a file-backed server database
+ok 28 - record survives closing and reopening a file-backed server database
+  ---
+  duration_ms: 14.6039
+  type: 'test'
+  ...
+1..28
+# tests 28
+# suites 0
+# pass 28
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 196.7114
