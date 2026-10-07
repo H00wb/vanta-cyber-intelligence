@@ -81,7 +81,7 @@ Canlı ortam sonuçlarını yerel testten türetmedim. İlk sürümün productio
 
 İlk çalışma başlangıcını 7 Ekim 2026 23:26:15 (Europe/Istanbul) olarak kaydettim. Tamamlanma ve süre dış teslim kaydında belirtilir. Hedef 3–4 saat emek harcanmış gibi göstermiyorum. Geçmiş proje ve bireysel katkı için daha sonra BiLSTM repo bağlantımı ve model/kod yazarlığı beyanımı paylaştım.
 
-## 8. İlk D1/Sites sürümünün canlı doğrulaması
+## 7. İlk D1/Sites sürümünün canlı doğrulaması
 
 İlk sürüm Sites üzerinde başarıyla yayımlandı. Yayın URL'si kayıt sırasında öngörülen domain'den farklı döndüğü için başarılı deployment'ın döndürdüğü URL'yi esas aldık. İlk sürümün canlı adresi https://vanta-cyber-intelligence.emrehanh00wb.chatgpt.site idi; bu adresin doğrulamasını Supabase/Vercel yayınıyla karıştırmıyorum.
 
@@ -95,7 +95,7 @@ Codex bağımsız Sites `read_database_overview` ve `read_database_table_rows` a
 
 Kaynak arşivi, kesin teslim commit'i, son yayın sonucu, canlı satırın korunması ve gerçek toplam oturum süresi dış teslim kaydında izlenir. Eski teslim commit'i veya eski D1 kayıt kimliğini yeni Supabase/Vercel tesliminin kimliği olarak kullanmıyorum.
 
-## 9. Supabase, Vercel ve GitHub teslimini tamamlamam
+## 8. Supabase, Vercel ve GitHub teslimini tamamlamam
 
 İlk sürümün tasarımını koruyup yayın/kayıt altyapısını standart Next.js, Vercel ve Supabase PostgreSQL'e taşıdım. Bu geçişi Codex ile uyguladım; alt ajanı migration'ın yetki/snapshot davranışını bağımsız incelemek ve depo sözleşmesi/HTTP transport testlerini güncellemek için kullandım. Belge düzenlemesini ayrı alt ajana verdim, canlı doğrulamayı ve son teslim eşleştirmesini ana çalışma akışında tamamladım. Bu iş paylaşımını kişisel elle kodlama iddiası olarak sunmuyorum.
 
