@@ -14,7 +14,7 @@ const nul=await post({...payload,email:'test\u0000@example.com',requestId:random
 const read=await fetch(`${base}/api/requests`);assert.equal(read.status,405);
 const concurrentPayload={...payload,name:'Paralel Test',email:'parallel-test@example.com',requestId:randomUUID()};
 const parallel=await Promise.all(Array.from({length:5},()=>post(concurrentPayload)));assert.deepEqual(parallel.map(x=>x.status).sort(),[200,200,200,200,201]);
-const supabase=process.env.SUPABASE_URL;const key=process.env.SUPABASE_PUBLISHABLE_KEY;assert.ok(supabase&&key,'Supabase env required for permission checks');
+const supabase=process.env.NEXT_PUBLIC_SUPABASE_URL;const key=process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;assert.ok(supabase&&key,'Supabase env required for permission checks');
 const anonRead=await fetch(`${supabase}/rest/v1/vanta_service_requests?select=id`,{headers:{apikey:key}});assert.ok([401,403].includes(anonRead.status));
 const anonWrite=await fetch(`${supabase}/rest/v1/vanta_service_requests`,{method:'POST',headers:{apikey:key,'Content-Type':'application/json'},body:JSON.stringify({id:randomUUID(),name:payload.name,email:payload.email,service:payload.service,description:payload.description})});assert.ok([401,403].includes(anonWrite.status));
 const directInvalid=await fetch(`${supabase}/rest/v1/rpc/vanta_submit_request`,{method:'POST',headers:{apikey:key,'Content-Type':'application/json'},body:JSON.stringify({p_id:randomUUID(),p_name:payload.name,p_email:'invalid',p_service:payload.service,p_description:payload.description})});assert.equal(directInvalid.status,400);

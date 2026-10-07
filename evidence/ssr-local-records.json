@@ -1,0 +1,29 @@
+{
+  "project": "fjzgkdymkltwvofbkubr",
+  "environment": "Next.js 16 SSR proxy / dedicated Supabase",
+  "rows": [
+    {
+      "id": "78ccd6f5-f189-4d82-9b12-1669a8c74fed",
+      "name": "Deniz Örnek",
+      "email": "deniz@example.com",
+      "service": "attack-surface",
+      "description": "Kurgusal test kurumunun internete açık dijital varlıklarını değerlendirmek istiyoruz.",
+      "created_at": "2026-10-07 22:43:15.013682+00",
+      "record_count": 1
+    },
+    {
+      "id": "c8cbeb53-f5c6-450a-9400-a331a5dc3313",
+      "name": "Deniz Örnek",
+      "email": "deniz@example.com",
+      "service": "attack-surface",
+      "description": "Kurgusal test kurumunun internete açık dijital varlıklarını değerlendirmek istiyoruz.",
+      "created_at": "2026-10-07 22:43:29.01844+00",
+      "record_count": 1
+    }
+  ],
+  "rls": true,
+  "anonRead": false,
+  "anonInsert": false,
+  "authenticatedRead": false,
+  "authenticatedInsert": false
+}

@@ -20,7 +20,7 @@ Bu yerel uygulama da ayarladığınız gerçek Supabase projesine yazar.
   npm run typecheck
   npx playwright install chromium
   npm run test:e2e
-Beklenen: 41 Node testi ve 15 Chromium testi başarılı.
+Beklenen: 47 Node testi ve 15 Chromium testi başarılı.
 Node testlerindeki SQLite fixture/mock HTTP gerçek PostgreSQL kanıtı değildir.
 Chromium akışındaki gerçek form gönderimleri Supabase'e kurgusal kayıt oluşturur.
 
@@ -76,7 +76,7 @@ Supabase publishable key ile tablo SELECT/INSERT reddedilir. RLS açıktır; ano
 Anonim vanta_submit_request RPC kasıtlı olarak talep oluşturabilir; doğrudan çağrı da DB CHECK kurallarına tabidir.
 
 7. SONUÇ VE TESLİM
-41 Node,15 yerel Chromium,15 canlı Chromium başarılıdır; lint,typecheck ve production build geçti.
+47 Node,15 yerel Chromium,15 canlı Chromium başarılıdır; lint,typecheck ve production build geçti.
 Raporların hedef ortam/tarih bilgilerine bakın. D1/Sites raporları ilk sürümün tarihsel kanıtıdır.
 AI_LOG birinci ağızda teknik kararları, AI katkısını, gerçek bulguları ve doğrulamayı açıklar.
 Kesin commit: git rev-parse HEAD. Uzak eşleşme: git ls-remote origin refs/heads/main.

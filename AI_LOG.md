@@ -9,7 +9,7 @@ D1/Sites ile hazırlanan ilk sürümün sonuçlarını aşağıda tarihsel kayı
 - Ana Codex agent'i: ilk sürümün Site yaşam döngüsü, kapsamın teknik karşılığı, sayfa/API/şema, test kodu, entegrasyon, belgeler ve yayın. Yeni altyapı geçişini de ana agent yürüttü.
 - `rubric_review`: ilk sürümde gereksinim/kanıt matrisi, form/server kodunun bağımsız salt okunur incelemesi ve geçmiş proje araştırması. İlk sürüm kodunu düzenlemedi veya yayın yapmadı. Yeni geçişte bu AI_LOG belgesinin birinci ağızdan, kanıtları koruyarak düzenlenmesi görevi verildi.
 - `hero_asset`: tek soyut siber istihbarat görselini üretti; Site dosyalarını düzenlemeden asset teslim etti.
-- `migration_review`: yeni altyapı geçişinde salt okunur inceleme yaptı; e-postadaki kontrol karakteri doğrulama açığını bildirdi. Ardından yeni RequestStore sözleşmesi ve Supabase HTTP transport testlerini yetkilendirdiğim iki dosyada düzenledi; son belge/kanıt incelemesini yaptı. Bulgunun düzeltmesini ve sonuçları 9. bölümde doğruladım.
+- `migration_review`: yeni altyapı geçişinde salt okunur inceleme yaptı; e-postadaki kontrol karakteri doğrulama açığını bildirdi. Ardından yeni RequestStore sözleşmesi ve Supabase HTTP transport testlerini yetkilendirdiğim iki dosyada düzenledi; son belge/kanıt incelemesini yaptı. Bulgunun düzeltmesini ve sonuçları 8. bölümde doğruladım.
 
 ## 1. Ürün anlatımı ve görsel kararım — ilk sürüm
 
@@ -27,7 +27,7 @@ Ziyaretçi talebinin yalnız arayüzde başarı gösteren bir demo olmamasını 
 
 Doğrudan HTTP isteğiyle istemci kontrolleri atlanabildiği için güven sınırını sunucu doğrulamasında kurduk. Kayıt türleri, hizmet allowlist'i, alan uzunlukları, JSON biçimi, 16 KiB gövde limiti ve origin denetimi sunucuda uygulandı. Veritabanındaki CHECK/NOT NULL kısıtlarını ek bir tutarlılık katmanı olarak kullandık.
 
-Codex geçersiz alanların veritabanına erişmeden reddini, bozuk JSON'u, fazla gövdeyi, farklı origin'i ve GET reddini otomatik sınadı. SQL/HTML benzeri test metni literal veri olarak saklandı. Sunucu hatalarında iç ayrıntı sızıntısı kontrol edildi. Bunlar ilk D1/Sites sürümünün kanıtlarıdır; Supabase geçişinin sonucunu ayrıca doğruladım; kanıtları 9. bölümde kaydettim.
+Codex geçersiz alanların veritabanına erişmeden reddini, bozuk JSON'u, fazla gövdeyi, farklı origin'i ve GET reddini otomatik sınadı. SQL/HTML benzeri test metni literal veri olarak saklandı. Sunucu hatalarında iç ayrıntı sızıntısı kontrol edildi. Bunlar ilk D1/Sites sürümünün kanıtlarıdır; Supabase geçişinin sonucunu ayrıca doğruladım; kanıtları 8. bölümde kaydettim.
 
 ## 3. Başarı koşulu ve tekrar gönderim kararım
 
@@ -35,7 +35,7 @@ Sonuç mesajının yalnız gerçekten bilinen durumu ifade etmesini istedim. İl
 
 Sunucu kaydı tamamlayıp yanıtı ulaştıramayabileceği için değişmemiş gönderimin UUID'sini koruduk. Birincil anahtar + ON CONFLICT ile aynı kimlik/aynı veri için tek satır bırakıldı; farklı veri 409 üretti. E-posta üzerinden global uniqueness uygulamadık; aynı kişi farklı ihtiyacı için tekrar talep gönderebilir.
 
-İlk sürümde Codex commit bekleme, paralel aynı kimlik, farklı veriyle kimlik çakışması, 503 ve yanlış yanıt ID'sinde başarı olmaması, gerçek kayıt sonrası response kaybı ve 200 replay, offline ve timeout senaryolarını çalıştırdı. Yanıt kaybı testinin yerel D1'de tek satır bıraktığı bağımsız okunarak doğrulandı. Yeni altyapıya geçerken aynı kabul şartlarını korudum; yeni depo üzerinde ayrıca çalıştırdığım testleri ve bağımsız SQL kanıtını 9. bölümde kaydettim.
+İlk sürümde Codex commit bekleme, paralel aynı kimlik, farklı veriyle kimlik çakışması, 503 ve yanlış yanıt ID'sinde başarı olmaması, gerçek kayıt sonrası response kaybı ve 200 replay, offline ve timeout senaryolarını çalıştırdı. Yanıt kaybı testinin yerel D1'de tek satır bıraktığı bağımsız okunarak doğrulandı. Yeni altyapıya geçerken aynı kabul şartlarını korudum; yeni depo üzerinde ayrıca çalıştırdığım testleri ve bağımsız SQL kanıtını 8. bölümde kaydettim.
 
 ## 4. İlk incelemede bulduğumuz ve düzelttiğimiz durumlar
 
@@ -46,7 +46,7 @@ Bağımsız AI incelemesinden gelen iki somut bulguyu düzeltme kapsamına aldı
 
 Mobil header taşması olasılığını 320 px testiyle ele aldık; dar ekranda marka alt satırı gizlendi ve header'ın gerektiğinde sarılması sağlandı. Fontlar rem kullandı; 200% masaüstü metin büyütme kontrolü geçti. Görünür odak, label/hata eşleşmesi, skip-link, canlı durum mesajı ve reduced-motion uygulandı. React kalite kontrolünde state yalnız formda tutuldu; statik sayfa server component olarak kaldı.
 
-Yeni geçiş sırasında tespit edilen e-posta kontrol karakteri açığını bu iki tarihsel düzeltmeye ekleyerek yapılmış gibi göstermiyorum; durumu 9. bölümde ayrı kaydediyorum.
+Yeni geçiş sırasında tespit edilen e-posta kontrol karakteri açığını bu iki tarihsel düzeltmeye ekleyerek yapılmış gibi göstermiyorum; durumu 8. bölümde ayrı kaydediyorum.
 
 ## 5. İlk geliştirme ortamındaki sorunları nasıl ele aldık
 
@@ -128,3 +128,16 @@ Canlı adresim: https://vanta-cyber-intelligence.vercel.app
 Kanıtlar `evidence/supabase-unit-tests.tap`, `supabase-browser-results.json`, `supabase-local-records.json`, `vercel-browser-results.json`, `supabase-production-verification.json`, `supabase-production-records.json`, `vercel-submit.json`, `vercel-lost-response.json` dosyalarındadır. Yalnız kurgusal test verisi kullandım. Son teslim commit'ini, arşiv eşleşmesini, yeniden deployment sonrasında kaydın korunmasını ve gerçek geçen oturum süresini dış TESLIM.txt kaydında belirtiyorum; commit'in kendisini kendi içeriğine yazmaya çalışmıyorum.
 
 Çalışmayı ölçütler ve somut kanıtlarla teslim ediyorum. Gerçek cihaz/ekran okuyucu manuel testi, geçmiş modelin yeniden eğitimi veya kesin 100 puan iddiası eklemiyorum. İlk D1/Sites sürümünün sonuçlarını tarihsel bırakıyorum; Supabase/Vercel sonuçlarını burada ayrı kaydediyorum.
+## 9. Ayrı Supabase projesini bağlamam ve SSR yardımcılarını eklemem
+
+Bağlantıyı hesabımdaki ayrı `vanta-cyber-intelligence` projesine (`fjzgkdymkltwvofbkubr`) taşıdım. Önce sahipliği, mevcut tablo/RPC'yi, CHECK kurallarını, VOLATILE davranışını ve kapalı anon/authenticated tablo yetkilerini kontrol ettim. Şema zaten hazır olduğu için aynı CREATE migration'ını tekrar uygulamadım ve önceki projenin kayıtlarını silmedim.
+
+Codex ile `@supabase/supabase-js@2.117.3` ve `@supabase/ssr@0.12.7` paketlerini sabit sürümlerle kurdum, lockfile'ı güncelledim. NEXT_PUBLIC_SUPABASE_URL ve NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY değerlerini yerelde ve Vercel Production/Preview'da tanımladım. Publishable key'in düşük yetkili/public niteliğini korudum; service-role/secret kullanmadım.
+
+Paylaşılan SSR örneğini Next.js 16'ya uyarladım: browser/server istemcilerini `utils/supabase` altında, oturum yenilemeyi root `proxy.ts` ile kurdum. Örnekteki cookie köprüsünü koruyup eksik gerçek `getClaims()` çağrısını ekledim. Güncel SDK'nın setAll ikinci argümanındaki Cache-Control/Expires/Pragma başlıklarını aynı cookie taşıyan response'a aktardım. İstemciyi sunucuda her istek için yeniden oluşturdum; API ve statik dosyaları matcher dışında tuttum. VANTA landing page tasarımını korudum; örnekteki todos listesini ürün sayfasına dönüştürmedim. Talep kaydını anonim RPC üzerinden, Auth session cookie/JWT'sinden bağımsız tuttum.
+
+`migration_review` alt ajanına cookie/cache sözleşmesi ve eşzamanlı istek izolasyonunu sınayan altı test eklettim. 47 Node testi geçti. Bu altı test mock SDK ile getClaims çağrısı, yenilemenin beklenmesi, cookie chunk/options, request/response aktarımı, cache başlıkları, anonim yönlendirmesiz devam ve istemci izolasyonunu doğrular; gerçek Auth kullanıcısı ile giriş/expired-session yenilemesi yapıldığı iddiasını eklemiyorum.
+
+Yerel üretim build'i, typecheck ve lint geçti; Proxy build çıktısında tanındı. Yeni proje üzerinde normal POST201 ve bağımsız SQL satırı doğrulandı. Proxy etkin halde 15 yerel Chromium testi gerçek yeni Supabase ile geçti. Son canlı deployment/HTTP/tarayıcı sonuçlarını ve yeni fixture'ları aşağıdaki güncel kanıt kaydında ayrıca belirteceğim.
+
+Kaynak olarak güncel [Supabase SSR rehberini](https://supabase.com/docs/guides/auth/server-side/creating-a-client), [cache güvenliği rehberini](https://supabase.com/docs/guides/auth/server-side/advanced-guide) ve [Next.js Proxy dosya kuralını](https://nextjs.org/docs/app/api-reference/file-conventions/proxy) kullandım. Optional skills kurulumunu ayrıca tekrarlamadım; mevcut Supabase becerisini ve resmi dokümanları kullandım.

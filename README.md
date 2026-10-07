@@ -19,11 +19,11 @@ npm ci
 `.env.example` dosyasını `.env.local` olarak kopyalayın ve kendi Supabase projenizin değerlerini girin:
 
 ```dotenv
-SUPABASE_URL=https://YOUR_PROJECT.supabase.co
-SUPABASE_PUBLISHABLE_KEY=YOUR_PUBLISHABLE_KEY
+NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=YOUR_PUBLISHABLE_KEY
 ```
 
-Bu değerler sunucu tarafında okunur; `NEXT_PUBLIC_` kullanılmaz. Publishable key düşük yetkilidir ve gizli bir güvenlik sınırı değildir. Bu uygulama geniş yetkili secret/service-role anahtarı gerektirmez. `.env.local`, Vercel oturum verileri ve test trace dosyaları Git'e dahil edilmez.
+Bu `NEXT_PUBLIC_` değerleri SSR ve browser istemci yardımcıları tarafından okunur; publishable key tarayıcıda kullanılabilir. Publishable key düşük yetkilidir ve gizli bir güvenlik sınırı değildir. Bu uygulama geniş yetkili secret/service-role anahtarı gerektirmez. `.env.local`, Vercel oturum verileri ve test trace dosyaları Git'e dahil edilmez. Güncel bağlantı hesabımdaki ayrı `vanta-cyber-intelligence` Supabase projesidir: `fjzgkdymkltwvofbkubr`.
 
 Supabase SQL Editor'de `supabase/migrations/20261007212753_vanta_requests.sql` dosyasının tamamını yeni kurulumda **bir kez** çalıştırın. Aynı migration daha önce uygulanmışsa yeniden çalıştırmayın. Migration yalnız VANTA tablosu/fonksiyonuna dokunur; başka proje tablolarının yetkilerini değiştirmez. Mevcut teslimde migration bağlı Supabase projesine uygulanmıştır.
 
@@ -48,6 +48,10 @@ Yerel uygulama da yapılandırılan gerçek Supabase'e yazar. Yalnız kurgusal i
 - `lib/request-validation.ts`: istemci ve sunucunun ortak alan kuralları.
 - `app/api/requests/route.ts` → `lib/request-handler.ts` → `lib/supabase-store.ts` → Supabase RPC → PostgreSQL.
 - `supabase/migrations/20261007212753_vanta_requests.sql`: tablo, CHECK kısıtları, RLS, yetkiler ve atomik kayıt RPC'si.
+- `utils/supabase/client.ts` ve `server.ts`: istenen browser / cookie tabanlı SSR istemci yardımcıları.
+- `utils/supabase/middleware.ts` ve Next.js 16 `proxy.ts`: getClaims ile oturum yenileme, request/response cookie köprüsü ve SDK cache başlıklarının taşınması. API ve statik dosyalar matcher dışıdır; landing page ve talep formu anonim kullanılır.
+
+SSR testleri mock SDK ile oturum/cookie/cache sözleşmesini kontrol eder. Gerçek bir kullanıcıyla sign-in/expired-session yenilemesi bu teslimde sınanmadı; siteye giriş veya todos sayfası eklenmedi. Gerçek anonim kayıt akışı yeni Supabase projesinde ayrıca sınanır.
 
 İsim 2–100, e-posta en fazla 254, açıklama 20–2000 Unicode kod noktası olmalıdır; hizmet allowlist'ten seçilir. Kontrol karakterleri reddedilir; açıklamada satır sonu/tab kabul edilir. E-posta küçük harfe çevrilir, alan kenarlarındaki boşluklar temizlenir. Gönderim kimliği UUID v4'tür. Sunucu JSON biçimini, yöntemi, gerçek gövde byte sınırını (16 KiB), alanları ve Origin'i kontrol eder. Next.js proxy ortamında public Host/forwarded protocol kullanılır; farklı origin reddedilir.
 
@@ -74,13 +78,13 @@ npm run start
 npm run test:e2e
 ```
 
-- **41 Node testi geçti.** HTTP/alan kuralları, kayıt bekleme, replay/çatışma, yanıt kimliği, hata yönetimi, NUL e-posta ve proxy Origin regresyonları. SQLite fixture yalnız depo sözleşmesinin test çiftidir; mocked fetch Supabase transport'u sınar. Bu testler gerçek PostgreSQL entegrasyonu diye sunulmaz.
+- **47 Node testi geçti.** HTTP/alan kuralları, kayıt bekleme, replay/çatışma, yanıt kimliği, hata yönetimi, NUL e-posta ve proxy Origin regresyonları; SSR cookie/cache aktarımı, refresh bekleme, getClaims çağrısı ve istek izolasyonu. SQLite fixture yalnız depo sözleşmesinin test çiftidir; mocked fetch Supabase transport'u sınar. Bu testler gerçek PostgreSQL entegrasyonu diye sunulmaz.
 - **15 yerel Chromium testi geçti:** derlenmiş Next.js → gerçek uzak Supabase.
 - **15 canlı Chromium testi geçti:** herkese açık Vercel → gerçek Supabase. 320/390/768/1440 px, form doğrulaması, loading kilidi, gerçek başarı, 503, offline, HTML/yanlış kimlik, timeout, yanıt kaybından sonra aynı kayıt, klavye, axe WCAG A/AA ve %200 metin büyütme.
 - Canlı HTTPS betiğinde 201/200/409/422/405, NUL reddi ve beş paralel istekte [201,200,200,200,200] doğrulandı. Anonim tablo okuma/yazma **401** ile reddedildi; doğrudan geçersiz RPC **400** döndürdü.
 - HTTP ve tarayıcı fixture'ları bağımsız Supabase SQL sorgusuyla okundu: dört alan/zaman eşleşti ve her kimlik için satır sayısı **1**. RLS ve anon/authenticated tablo yetkileri ayrıca doğrulandı.
 
-Kanıtlar: `evidence/supabase-unit-tests.tap`, `supabase-browser-results.json`, `supabase-local-records.json`, `vercel-browser-results.json`, `supabase-production-verification.json`, `supabase-production-records.json`, `vercel-submit.json`, `vercel-lost-response.json`, `vercel-desktop.png`, `vercel-mobile.png`.
+Kanıtlar: `evidence/ssr-unit-tests.tap`, `supabase-browser-results.json`, `supabase-local-records.json`, `vercel-browser-results.json`, `supabase-production-verification.json`, `supabase-production-records.json`, `vercel-submit.json`, `vercel-lost-response.json`, `vercel-desktop.png`, `vercel-mobile.png`.
 
 Canlı HTTP kontrolü, ortam değerleri hazırken şöyle çalıştırılır (yeni kurgusal kayıt oluşturur):
 
@@ -90,7 +94,7 @@ node --env-file=.env.local scripts/verify-production.mjs https://vanta-cyber-int
 
 Betik HTTP kanıtını üretir; bağımsız SQL okumasını kendiliğinden yapmaz. Betik tekrar çalıştırılırsa yeni kimlikler için SQL kontrolünü ayrıca yenileyin. Ayrıntılı canlı tarayıcı komutları TXT dosyasındadır.
 
-H00wb GitHub hesabındaki public repo, Bulyerleş Vercel hesabındaki `vanta-cyber-intelligence` projesine bağlanmıştır. `main` push'ları Git entegrasyonuyla yayımlanır. `vercel.json` Next.js preset'ini, npm ci kurulumunu ve build komutunu tanımlar. SUPABASE_URL / SUPABASE_PUBLISHABLE_KEY Production ve Preview ortamlarında yapılandırılmıştır. Preview da bu değerlendirme tablosuna kurgusal kayıt yazar.
+H00wb GitHub hesabındaki public repo, Bulyerleş Vercel hesabındaki `vanta-cyber-intelligence` projesine bağlanmıştır. `main` push'ları Git entegrasyonuyla yayımlanır. `vercel.json` Next.js preset'ini, npm ci kurulumunu ve build komutunu tanımlar. NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY Production ve Preview ortamlarında yapılandırılmıştır. Preview da bu değerlendirme tablosuna kurgusal kayıt yazar.
 
 Kesin teslim commit'i `git rev-parse HEAD` ile, GitHub eşleşmesi `git ls-remote origin refs/heads/main` ile kontrol edilir. Son commit ve redeploy sonrası bağımsız kayıt kanıtı dış `TESLIM.txt` / teslim paketinde belirtilir. Kaynak ZIP yalnız o commit'in izlenen dosyalarından oluşturulur; `.env`, node_modules veya yerel oturum/state içermez.
 
