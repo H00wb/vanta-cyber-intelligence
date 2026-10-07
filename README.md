@@ -90,20 +90,14 @@ node --env-file=.env.local scripts/verify-production.mjs https://vanta-cyber-int
 
 Betik HTTP kanıtını üretir; bağımsız SQL okumasını kendiliğinden yapmaz. Betik tekrar çalıştırılırsa yeni kimlikler için SQL kontrolünü ayrıca yenileyin. Ayrıntılı canlı tarayıcı komutları TXT dosyasındadır.
 
-## Vercel ve kaynak teslimi
-
 H00wb GitHub hesabındaki public repo, Bulyerleş Vercel hesabındaki `vanta-cyber-intelligence` projesine bağlanmıştır. `main` push'ları Git entegrasyonuyla yayımlanır. `vercel.json` Next.js preset'ini, npm ci kurulumunu ve build komutunu tanımlar. SUPABASE_URL / SUPABASE_PUBLISHABLE_KEY Production ve Preview ortamlarında yapılandırılmıştır. Preview da bu değerlendirme tablosuna kurgusal kayıt yazar.
 
 Kesin teslim commit'i `git rev-parse HEAD` ile, GitHub eşleşmesi `git ls-remote origin refs/heads/main` ile kontrol edilir. Son commit ve redeploy sonrası bağımsız kayıt kanıtı dış `TESLIM.txt` / teslim paketinde belirtilir. Kaynak ZIP yalnız o commit'in izlenen dosyalarından oluşturulur; `.env`, node_modules veya yerel oturum/state içermez.
-
-## AI, starter ve kişisel katkı
 
 İlk sürüm Sites/Vinext Next.js starter'ı ile başladı; starter ve shadcn/ui yardımcı dosyaları depoda tarihsel olarak duruyor. Aktif uygulama standart Next.js + Supabase + Vercel kullanır; eski D1/Vite/Sites scriptleri güncel kurulum için kullanılmaz. Eski D1/Sites raporları yeni PostgreSQL/Vercel kanıtı olarak değerlendirilmemelidir.
 
 Hazır VANTA landing page şablonu kullanılmadı. Türkçe ürün anlatımı, sayfa düzeni, form/kayıt doğruluk sözleşmesi ve testler bu case için Codex desteğiyle üretildi. Hero görseli ImageGen ile üretildi. AI ve alt ajan iş paylaşımı, kabul edilen/değiştirilen öneriler ve gerçek başarısızlıklar AI_LOG'da açıkça yer alır. Lisans/sağlayıcı kayıtları ilk sürümdeki vendor dosyalarında korunur. Uygulama runtime'ında LLM çağrısı yoktur; sohbetin temperature=0 ayarlandığı iddia edilmez.
 
 Geçmiş projem: [Music-Generation-Using-BiLSTM](https://github.com/H00wb/Music-Generation-Using-BiLSTM). Modeli oluşturup kodunu kendim yazdığımı beyan ettim. Notebook'ta music21 ile MIDI hazırlama, 100 adımlık sekanslar ve Keras'ta 64 → 128 → 64 BiLSTM katmanları incelenebilir. [Model/notebook commit'i](https://github.com/H00wb/Music-Generation-Using-BiLSTM/commit/52a7700afe4ced82f8c3631609a1633e10340ef0) hesap katkısını gösterir. Repo bu case'te statik incelendi; model yeniden eğitilmedi veya performansı tekrar ölçülmedi.
-
-## Bilinen sınırlar
 
 Değerlendirme için kurgusal verili hizmet sitesi teslimidir. Ticari bot/rate-limit koruması, CRM/e-posta bildirimi, yönetim paneli, gerçek tehdit analizi motoru ve veri yaşam döngüsü süreçleri kapsam dışıdır. Gerçek cihaz/ekran okuyucu manuel testi yapılmadı; axe sonuçları tüm erişilebilirliği tek başına kanıtlamaz. Testler ve kanıtlar gereksinimleri somutlaştırır; mülakat/değerlendirme puanı garanti edilmez. Başlangıç, gerçek geçen süre ve son teslim saati dış teslim kaydında dürüstçe belirtilir.
