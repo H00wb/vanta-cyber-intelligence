@@ -1,31 +1,40 @@
-# Gereksinim ve kanıt matrisi
+# Gereksinimlerin karşılığı
 
-Bu dosya gereksinimlerin uygulama ve kanıt karşılığını gösterir; kesin puan garantisi değildir. Canlı adres: https://vanta-cyber-intelligence.vercel.app . Kaynak: https://github.com/H00wb/vanta-cyber-intelligence . D1/Sites kanıtları ilk sürümün tarihsel sonuçlarıdır.
+Bu dosya, değerlendirme ölçütlerinin projede hangi davranış ve kontrolle karşılandığını gösterir. Puanı değerlendirici verir; aşağıdaki eşleştirme kesin puan tahmini değildir.
 
-| Ölçüt | Uygulama ve somut kanıt | Durum |
+- [Canlı site](https://vanta-cyber-intelligence.vercel.app)
+- [Kaynak kod](https://github.com/H00wb/vanta-cyber-intelligence)
+- [Doğrudan yönetim girişi](https://vanta-cyber-intelligence.vercel.app/admin)
+
+| Ölçüt | Projedeki karşılığı | İnceleme yolu |
 | --- | --- | --- |
-| Çalışan ürün ve gereksinimler (25) | Türkçe hedef kitle/problem, dört hizmet, responsive landing page, isim/e-posta/hizmet/açıklama formu. Vercel HTTPS ve gerçek Supabase kaydı. | 15 yerel +15 canlı Chromium; bağımsız dört alan/zaman/count=1 SQL kanıtı |
-| Kod, veri akışı ve temel güvenlik (20) | Ortak istemci/sunucu validator, JSON/body/origin kontrolü, DB CHECK, UUID idempotency, kapalı RLS tablo grants, dar anonim oluşturma RPC, güvenilir başarı gate'i. | 47 Node testi; canlı201/200/409/422/405; anon read/write401; doğrudan geçersiz RPC 400; SQL rol kanıtı |
-| AI ile üretim ve doğrulama (20) | Birinci ağız AI_LOG, açık Codex/agent katkısı, kabul/değişiklik gerekçesi, gerçek bulunan hatalar ve test kanıtları. | Belgelendi; değerlendirme takdirine bağlı |
-| Kullanılabilirlik ve erişilebilirlik (10) | Label/hata ilişkisi, odak yönetimi, skip-link, live durum, rem, reduced-motion. | 320/390/768/1440px; axe WCAG A/AA; klavye ve %200 metin. Gerçek cihaz/ekran okuyucu manuel testi yapılmadı |
-| Test, hata yönetimi ve teslim (10) | 47 Node,15 yerel,15 canlı Chromium; loading/503/offline/HTML/wrongid/timeout/yanıtkaybı; kalıcı SQL kanıtı; canlı URL/public repo/README/AI_LOG/TXT. | Geçti; kesin commit/arşiv/redeploy koruma kanıtı TESLIM.txt içindedir |
-| Yazılı problem çözme (10) | README veri akışı/yetki sınırı/kurulum, AI_LOG karar-gerekçe-doğrulama, TXT tekrarlanabilir test adımları. | Belgelendi; değerlendirme takdirine bağlı |
-| Geçmiş proje ve kişisel katkı (5) | H00wb/Music-Generation-Using-BiLSTM modeli/kod yazarlığı beyanı; public notebook/commit kaynakları. | Statik repo incelemesi; model yeniden eğitilmedi |
+| Çalışan ürün ve gereksinimler — 25 | Hedef kitle ve problem anlatımı, dört hizmet, mobil/masaüstü sayfa, dört alanlı form, gönderiliyor/başarı/hata durumları, Supabase'de kayıt. | Formu gönderin; dönen UUID'yi panelde arayıp dört alanı ve kayıt zamanını karşılaştırın. Yenileyerek kalıcılığı kontrol edin. |
+| Kod, veri akışı ve temel güvenlik — 20 | Ortak istemci/sunucu doğrulaması, JSON/gövde/Origin kontrolü, DB kısıtları, tek kayıt bırakan tekrar gönderim, kapalı anonim tablo erişimi, sınırlı RPC'ler. Yönetim okuması oturum ve sunucudaki ayrı token ile korunur. | Validator, API, depo ve iki SQL migration'ını okuyun. Olumsuz durumları test rehberindeki beklenen HTTP sonuçlarıyla karşılaştırın. |
+| AI ile üretim ve doğrulama — 20 | AI_LOG'da kapsam kararları, kabul edilen/değiştirilen çözümler, açık Codex ve alt ajan katkısı, gerçek hata bulguları ve kontrol sınırları. | AI_LOG'u kod ve test senaryolarıyla karşılaştırın. Tarihsel sonuçlarla güncel kayıt kanıtını ayırın. |
+| Kullanılabilirlik ve erişilebilirlik — 10 | Görünür odak, etiketler, alanla ilişkili hatalar, durum duyurusu, klavye kullanımı, dar ekranda form ve okunabilir içerik. | Mobil genişlikleri, klavyeyi, %200 metin büyütmeyi ve tarayıcı erişilebilirlik kontrolünü kullanın. |
+| Test, hata yönetimi ve teslim — 10 | Anlamlı olumlu/olumsuz senaryolar, belirsiz gönderimde doğru mesaj, çalıştırma adımları, canlı URL, kaynak ve belgeler. | TEST_REHBERI.txt ile tekrar edin; güncel kontrol tarihi, teslim commit'i ve kaynak arşivini karşılaştırın. |
+| Yazılı problem çözme — 10 | README ve AI_LOG'da risk, seçim, düzeltme ve doğrulama gerekçeleri. | Bunlar projedeki kararların kanıtıdır. Başvuru formunda ayrıca sorulan bir senaryonun yanıtı bu depoda verilmediyse, bu belgeleri otomatik olarak o yanıtın yerine saymayın. |
+| Geçmiş proje ve kişisel katkı — 5 | BiLSTM müzik üretimi projesine bağlantı, model/kod yazarlığı beyanı ve hesap katkısını gösteren commit. | README'deki repo ve commit'i inceleyin. Bu case sırasında yeniden eğitim veya performans ölçümü yapılmadı. |
 
-## Teslim şartlarının karşılığı
+## Güncel kontrol kaydı
 
-- Mobil/masaüstü sayfa: `app/page.tsx`, `app/globals.css`; `evidence/vercel-desktop.png`, `vercel-mobile.png`.
-- Dört alan ve çift doğrulama: `components/request-form.tsx`, `lib/request-validation.ts`, API handler.
-- Gönderiliyor/başarı/hata: form durumu ve browser suite; başarı yalnız doğrulanmış kayıt sonucu.
-- Kalıcı kayıt: `public.vanta_service_requests`; `evidence/ssr-production-records.json` bağımsız SQL.
-- Tekrar/paralellik: aynı UUID/aynı içerik 200; farklı içerik 409; beş gerçek istek ve count=1.
-- CanlıURL ve source: public Vercel, H00wb GitHub; Git entegrasyonu.
-- Belgeler: README.md, AI_LOG.md, TEST_REHBERI.txt; kesin commit/dış teslim kaydı.
+Node: **75**. Tarayıcı: **yerel 21/21 ve canlı 21/21**. Canlı kontrol zamanı: **8 Ekim 2026, 03:32 (Europe/Istanbul)**.
 
-## Kanıt dosyaları
+Önceki test turlarının başarıları tarihsel sonuçlardır. Veritabanı sonradan temizlendiği için eski test satırlarının hâlâ mevcut olduğunu ileri sürmüyoruz. Kalıcılık incelemesinde güncel paneli, mevcut kaydı ve güncel ekran görüntülerini esas alın. Mevcut kullanıcı kaydı korunur; yeni otomatik testlerin oluşturduğu kurgusal satırlar ayrıca tanımlanır.
 
-`ssr-unit-tests.tap`:47 test (altı SSR cookie/cache testi mock SDK kullanır). `ssr-local-browser-results.json`:15 yerel test. `ssr-vercel-browser-results.json`:15 canlı test. `ssr-local-records.json`:yerel Next→gerçek PG. `supabase-production-verification.json`:canlı HTTPS/API/erişim kontrolleri. `ssr-production-records.json`:normal/paralel/browser/replay satırları ve rol sınırları. `vercel-submit.json`, `vercel-lost-response.json`:gerçek browser gönderim kimlikleri. Güncel ayrı Supabase projesi `fjzgkdymkltwvofbkubr`; önceki raporlar tarihsel olarak korunur. Auth sign-in/expired-session testi yapılmadı.
+## Kabul için kontrol edilecek davranışlar
 
-## Sınırlar
+- Geçerli talep kaydedilir; başarı mesajındaki kimlik aynı veritabanı satırına karşılık gelir.
+- Geçersiz alan sunucuda da reddedilir; kayıt ve başarı mesajı oluşmaz.
+- Gönderim sırasında tekrar tıklama ikinci istek başlatmaz.
+- Depolama, ağ, bozuk yanıt ve zaman aşımı durumlarında başarı iddiası yapılmaz.
+- Yanıt kaybından sonra aynı talep aynı kimlikle doğrulanır; farklı içerik aynı kimliği kullanamaz.
+- Form verileri giriş yapılmadan yönetim API'sinden okunamaz; panel yalnız okuma sunar.
+- Mobil ve masaüstünde içerik ve form kullanılabilir; etiketler, hata mesajları ve klavye odağı anlaşılırdır.
+- Kurulum, test komutları, kaynak, yayın ve teslim commit'i birbiriyle eşleşir.
 
-Anonim RPC bilerek talep oluşturabilir; publishable key gizli güvenlik sınırı değildir. Ticari bot/rate-limit, CRM/e-posta, yönetim paneli, gerçek tehdit motoru ve veri yaşam döngüsü kapsam dışıdır. Otomatik erişilebilirlik testi bütün kullanıcı koşullarını garanti etmez. Değerlendiricinin takdirindeki ölçütler ve mülakat sonucu için100 puan garantisi verilmez; tamamlanmış gereksinimler somut kanıtlarla sunulur.
+## Açık sınırlar
+
+Demo yönetim hesabının bilgileri herkese açıktır; kişisel veri gizliliği sağlayan üretim hesabı gibi değerlendirilmez. Anonim talep RPC'si doğrudan çağrılabilir; form için hız sınırı ve bot koruması yoktur. Yönetim girişindeki deneme sınırı farklı bir amaç taşır.
+
+Taklit depo/HTTP/SDK testleri gerçek PostgreSQL entegrasyonu değildir. Otomatik erişilebilirlik taraması tüm kullanım koşullarını kanıtlamaz. Kaynakta bulunmayan başvuru senaryosu ve geçmiş projedeki kişisel katkının kapsamı için gerekirse ek kanıt değerlendirilir; eksik erişimi gerçekleşmiş başarısızlık gibi sunmayız.

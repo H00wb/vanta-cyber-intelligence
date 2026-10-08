@@ -1,149 +1,65 @@
-# AI ile üretim ve doğrulama kaydım
+# AI ile çalışma kaydım
 
-Bu belgede VANTA case study'sindeki kararlarımı, AI ile iş paylaşımımı ve doğrulama kanıtlarını kaydediyorum. Kısa yönlendirmelerimi teknik amaçlarıyla özetliyorum; bunlar birebir prompt alıntısı değildir. AI desteğini, kendi katkımı ve gerçekten alınan test sonuçlarını açıkça ayırıyorum.
+VANTA case study'sinde aldığım kararları, AI ile iş paylaşımımı ve kontrolleri bu belgede özetliyorum. Kısa konuşma yönlendirmelerimi teknik amaçlarıyla anlatıyorum; bu metin birebir prompt dökümü değildir.
 
-D1/Sites ile hazırlanan ilk sürümün sonuçlarını aşağıda tarihsel kayıt olarak koruyorum. Sonraki Supabase, Vercel ve GitHub geçişinin uygulama ve doğrulama durumunu ayrı bölümde izliyorum. İlk sürümün başarılı testlerini yeni altyapının doğrulanmış sonucu olarak kullanmıyorum.
+Kapsamı, hizmetin anlatımını ve kabul şartlarını belirledim. Kod, test, belge ve yayın çalışmalarında Codex kullandım. Ana ajan uygulama ve entegrasyonu yürüttü; alt ajanlar form ve veritabanı sözleşmesini bağımsız inceledi, testleri ve belgeleri hazırladı. Hero görselini ImageGen ile ürettik. Bu iş paylaşımını kendi katkımdan ayrı ve açık tutuyorum.
 
-## AI ile iş paylaşımım
+## Sayfanın amacını belirlemem
 
-- Ana Codex agent'i: ilk sürümün Site yaşam döngüsü, kapsamın teknik karşılığı, sayfa/API/şema, test kodu, entegrasyon, belgeler ve yayın. Yeni altyapı geçişini de ana agent yürüttü.
-- `rubric_review`: ilk sürümde gereksinim/kanıt matrisi, form/server kodunun bağımsız salt okunur incelemesi ve geçmiş proje araştırması. İlk sürüm kodunu düzenlemedi veya yayın yapmadı. Yeni geçişte bu AI_LOG belgesinin birinci ağızdan, kanıtları koruyarak düzenlenmesi görevi verildi.
-- `hero_asset`: tek soyut siber istihbarat görselini üretti; Site dosyalarını düzenlemeden asset teslim etti.
-- `migration_review`: yeni altyapı geçişinde salt okunur inceleme yaptı; e-postadaki kontrol karakteri doğrulama açığını bildirdi. Ardından yeni RequestStore sözleşmesi ve Supabase HTTP transport testlerini yetkilendirdiğim iki dosyada düzenledi; son belge/kanıt incelemesini yaptı. Bulgunun düzeltmesini ve sonuçları 8. bölümde doğruladım.
+Ziyaretçinin ilk ekranda VANTA'nın kime yardımcı olduğunu anlamasını ve talep formuna ulaşmasını istedim. İçeriği problem, yaklaşım, dört hizmet ve talep sırasıyla kurduk. İngilizce sloganı koruyup hizmet açıklamalarını Türkçe hazırladık. Ölçülmemiş başarı oranları veya müşteri referansları eklemedim.
 
-## 1. Ürün anlatımı ve görsel kararım — ilk sürüm
+İlk kurulumda Sites/Vinext starter'ını kullandık. Daha sonra mevcut tasarımı koruyarak standart Next.js, Supabase ve Vercel'e geçiş istedim. Starter altyapısını kabul ettim; sayfa içeriği ve kayıt davranışı bu case için AI desteğiyle üretildi. Uygulamanın içinde çalışan bir LLM veya gerçek tehdit analiz motoru bulunmuyor. Sohbetin temperature ayarının 0 yapıldığına dair bir doğrulama iddiası eklemiyorum.
 
-Güvenlik liderlerinin, SOC ve BT ekiplerinin VANTA'nın hangi sorunu çözdüğünü ilk ekranda anlamasını ve hizmet talebine ulaşmasını hedefledim.
+## Talebin gerçekten kaydedilmesini sağlamam
 
-Codex ile Türkçe içerik ürettim; İngilizce marka sloganını korudum. İçerik sırasını problem → yaklaşım → dört hizmet → başlangıç süreci → talep formu olarak kurduk. Koyu zemin, turuncu vurgu, açık metin ve sade teknik başlıklar kullanıldı. Tek görseli, metni ve formu gölgelemeyen sağ hero sütununda değerlendirdik.
+Arayüzün yalnız gönderim yapılmış gibi görünmesini yeterli kabul etmedim. İsim, e-posta, hizmet ve açıklama için ortak doğrulama kuralları kullandık; aynı bilgiler sunucuda yeniden denetlenir. Veritabanında da alan türü, uzunluk, hizmet ve kimlik kuralları bulunur.
 
-Ölçülmemiş başarı yüzdelerini, müşteri logolarını, canlı tehdit sayaçlarını ve çalışmayan dashboard gösterimini kullanmadım. Brief'teki dört hizmeti ve ziyaretçi talebini ana akışta tuttum. Hazır starter'ı altyapı olarak kabul ettim; Codex başlangıç placeholder sayfasını bu case'in içeriğiyle değiştirdi.
+Başarı koşulunu açık tuttum: kayıt işlemi tamamlanmalı, API yanıtı geçerli olmalı ve dönen kimlik gönderilen UUID ile eşleşmeli. HTTP 200 tek başına yeterli değildir. Ağ hatasında veya zaman aşımında kesin sonucu bilemeyeceğimiz için bilgileri koruyan “Gönderim doğrulanamadı” mesajını tercih ettim.
 
-İlk sürümde Codex 320–1440 px responsive ölçümleri, masaüstü/mobil screenshot incelemesini, CTA anchor'larını, görünür formu ve başlıkları kontrol etti. Hero 1254×1254 PNG'den 1000×1000 WebP'ye çevrildi (yaklaşık 97 KB). Bu görseli gerçek güvenlik verisi veya telemetri olarak sunmuyorum.
+Yanıt kaybolduğunda aynı talep aynı UUID ile yeniden gönderilir. Aynı kimlik ve içerik tek kaydı doğrular; farklı içerik 409 hatası verir. PostgreSQL'de eşzamanlı kayıt sonrası satırın doğru okunması için INSERT ve SELECT'i ayrı ifadeler olarak kullandık. Bu tercih, tek statement'ın snapshot sınırına takılabilen alternatifin yerine geçti.
 
-## 2. Sunucunun doğruluk sınırı — ilk site sürümü
+## Veritabanı erişimini sınırlamam
 
-Ziyaretçi talebinin yalnız arayüzde başarı gösteren bir demo olmamasını istedim. İlk sürümde AI ile geliştirilen çözümde Cloudflare D1'i kalıcı kayıt kaynağı olarak kullandık. Browser storage veya process belleğini ürün kaydı için kullanmadık. Drizzle versionlanan şema/migration üretirken runtime sorguları D1 prepared statement ve bound parametrelerle çalıştı. Aynı alan kurallarını istemci ve sunucuda uyguladık; sunucu kontrolünü zorunlu tuttuk.
+Supabase'in publishable key'ini gizli bir anahtar gibi kullanmadım. RLS'yi açıp anonim rollerin tabloyu doğrudan okuma ve yazma yetkisini kaldırdık. Talep oluşturmayı tipli argüman alan, sabit şema adları kullanan ve yalnız kimlik/tekrar bilgisini döndüren bir RPC ile sunduk. Fonksiyonun SECURITY DEFINER yetkisini boş search_path ve dar işlem kapsamıyla sınırladık.
 
-Doğrudan HTTP isteğiyle istemci kontrolleri atlanabildiği için güven sınırını sunucu doğrulamasında kurduk. Kayıt türleri, hizmet allowlist'i, alan uzunlukları, JSON biçimi, 16 KiB gövde limiti ve origin denetimi sunucuda uygulandı. Veritabanındaki CHECK/NOT NULL kısıtlarını ek bir tutarlılık katmanı olarak kullandık.
+Bu fonksiyon anonim taleplere açıktır; Vercel API'si atlanarak çağrılabilir. Bu yüzden veritabanı kurallarını da gerekli gördüm. Origin denetimini bot koruması olarak sunmadım. Form için hız sınırı veya bot doğrulaması bu sürümde bulunmuyor.
 
-Codex geçersiz alanların veritabanına erişmeden reddini, bozuk JSON'u, fazla gövdeyi, farklı origin'i ve GET reddini otomatik sınadı. SQL/HTML benzeri test metni literal veri olarak saklandı. Sunucu hatalarında iç ayrıntı sızıntısı kontrol edildi. Bunlar ilk D1/Sites sürümünün kanıtlarıdır; Supabase geçişinin sonucunu ayrıca doğruladım; kanıtları 8. bölümde kaydettim.
+## Kontrollerde bulduğumuz sorunlar
 
-## 3. Başarı koşulu ve tekrar gönderim kararım
+Bağımsız AI incelemesi ve otomatik testlerde çıkan gerçek bulguları düzeltme kapsamına aldım:
 
-Sonuç mesajının yalnız gerçekten bilinen durumu ifade etmesini istedim. İlk sürümde INSERT await edilmeden başarı dönülmedi. UI yalnız 200/201 ve beklenen kayıt UUID'siyle eşleşen geçerli JSON yanıtında başarı gösterdi. Ağ kesilmesi ve 15 saniye zaman aşımında kesin sonucu bilemediğimiz için “Gönderim doğrulanamadı” mesajını tercih ettim; girdiler korundu.
+- JavaScript'in UTF-16 uzunluğu ile veritabanının karakter hesabı farklıydı. Ortak validator'ı Unicode kod noktası hesabına çevirdik; kısa emoji girdileri ve geçerli sınırlar için regresyon testleri ekledik.
+- Boş veya HTML sunucu yanıtında teknik JSON hatası görünebiliyordu. Kullanıcıya anlaşılır belirsizlik mesajı gösterilmesini sağladık; yanlış yanıtın başarıya dönüşmemesini tarayıcıda sınadık.
+- NUL içeren bir e-posta eski validator'dan geçiyordu. Kontrol karakterlerini reddettik ve bu örneği ayrı bir testle koruduk.
+- Next.js'e geçişte yerel isteğin dış Origin'i iç localhost adresiyle karşılaştırıldığı için geçerli gönderim 403 alıyordu. Public Host ve forwarded protocol üzerinden kontrolü düzelttik; başka origin'in reddini koruduk.
+- İlk Next.js tarayıcı turundaki bazı testler, form hata mesajıyla Next.js route announcer'ın aynı seçiciye uymasından başarısız oldu. Seçiciyi form içine daralttık; erişilebilir duyuruyu kaldırmadık.
+- Supabase erişim reddi kontrolü önce yalnız 403 bekliyordu. Gerçek 401 yanıtını da ret olarak ele aldık; başarılı boş yanıtı erişim reddi saymadık.
 
-Sunucu kaydı tamamlayıp yanıtı ulaştıramayabileceği için değişmemiş gönderimin UUID'sini koruduk. Birincil anahtar + ON CONFLICT ile aynı kimlik/aynı veri için tek satır bırakıldı; farklı veri 409 üretti. E-posta üzerinden global uniqueness uygulamadık; aynı kişi farklı ihtiyacı için tekrar talep gönderebilir.
+Supabase SSR yardımcılarını eklerken cookie parçalarının, tarayıcı seçeneklerinin ve cache başlıklarının aynı yanıtta taşınmasını kontrol ettik. Bu kontroller taklit SDK ile yapıldı; gerçek bir Supabase Auth kullanıcısının giriş/yenileme testi olarak sunmuyorum.
 
-İlk sürümde Codex commit bekleme, paralel aynı kimlik, farklı veriyle kimlik çakışması, 503 ve yanlış yanıt ID'sinde başarı olmaması, gerçek kayıt sonrası response kaybı ve 200 replay, offline ve timeout senaryolarını çalıştırdı. Yanıt kaybı testinin yerel D1'de tek satır bıraktığı bağımsız okunarak doğrulandı. Yeni altyapıya geçerken aynı kabul şartlarını korudum; yeni depo üzerinde ayrıca çalıştırdığım testleri ve bağımsız SQL kanıtını 8. bölümde kaydettim.
+## Kayıtları incelemek için yönetim ekranı eklemem
 
-## 4. İlk incelemede bulduğumuz ve düzelttiğimiz durumlar
+Sonraki isteğim, değerlendiren kişinin veritabanındaki kaydı doğrudan inceleyebilmesiydi. Ana sayfanın tasarımını koruyup yalnız doğrudan /admin adresinden açılan bir giriş ve salt okunur tablo ekledik. Panelde kimlik filtresi, sayfalama, dört form alanı ve kayıt zamanı bulunur.
 
-Bağımsız AI incelemesinden gelen iki somut bulguyu düzeltme kapsamına aldım:
+Demo girişini admin / admin123 olarak belirledim. Bunun herkese açık değerlendirme hesabı olduğunu açıkça yazdım. Sunucuda parola scrypt özetiyle kontrol edilir; bir saatlik imzalı oturum HttpOnly, SameSite=Strict ve HTTPS'te Secure çerezle taşınır. Listeleme, geçerli oturumdan sonra sunucunun kullandığı ayrı okuma token'ına bağlı RPC ile yapılır. Token'ın yalnız özeti veritabanında tutulur; service-role anahtarı kullanılmaz. Giriş denemelerini veritabanında beş dakikada on denemeyle sınırlandırdık.
 
-1. JavaScript string.length UTF-16 birimi sayarken SQLite length() Unicode kod noktası sayıyordu. Bir emoji isim veya on emoji açıklama validator'u geçip DB CHECK'te hata verebiliyordu. Codex alan uzunluğu hesabını Array.from(...).length ile veritabanıyla eşleştirdi. Geçersiz kısa ve geçerli sınır Unicode verisi için regresyon testleri ekledi.
-2. Boş/HTML/bozuk sunucu yanıtında JSON parse hata metni kullanıcıya taşınabiliyordu. Codex parse hatasını okunabilir belirsiz gönderim mesajına çevirdi. HTML 502 yanıtında başarı olmaması ve teknik parser metni görünmemesi tarayıcıda sınandı.
+## Sonuçları nasıl kaydediyorum
 
-Mobil header taşması olasılığını 320 px testiyle ele aldık; dar ekranda marka alt satırı gizlendi ve header'ın gerektiğinde sarılması sağlandı. Fontlar rem kullandı; 200% masaüstü metin büyütme kontrolü geçti. Görünür odak, label/hata eşleşmesi, skip-link, canlı durum mesajı ve reduced-motion uygulandı. React kalite kontrolünde state yalnız formda tutuldu; statik sayfa server component olarak kaldı.
+Birim testlerini, taklit Supabase HTTP/SDK testlerini ve gerçek veritabanına giden tarayıcı kontrollerini ayırıyorum. Önceki geliştirme turlarında 47 Node, 15 yerel ve 15 canlı tarayıcı testi geçti; veritabanı sonradan temizlendiği için bu tarihsel sonuçlar eski kayıtların bugün varlığını kanıtlamaz.
 
-Yeni geçiş sırasında tespit edilen e-posta kontrol karakteri açığını bu iki tarihsel düzeltmeye ekleyerek yapılmış gibi göstermiyorum; durumu 8. bölümde ayrı kaydediyorum.
+Güncel yeniden kontrol: Node 75, tarayıcı yerel 21/21 ve canlı 21/21; canlı kontrol zamanı 8 Ekim 2026, 03:32 (Europe/Istanbul). Sonuçları güncel yayın ve mevcut kayıt üzerinden yeniden kontrol ederek teslim kaydına işliyoruz. Yeni testlerde kurgusal veri kullanılır; mevcut kullanıcı kaydı silinmez. Paylaşılan ekran görüntülerinde mevcut gerçek kişinin isim ve e-postasını yayımlamıyorum.
 
-## 5. İlk geliştirme ortamındaki sorunları nasıl ele aldık
+README'de kurulum ve erişim adımlarını, TEST_REHBERI.txt'de senaryoları ve beklenen sonuçları verdim. Geçmiş test kimliklerini güncel kalıcılık kanıtı olarak taşımadım. Teslim commit'i, yayın ve kaynak arşivi son teslim kaydında birlikte belirtilir.
 
-Başlangıçta korumalı terminal ve alternatif Node REPL `setup refresh had errors` nedeniyle çalışmadı. Codex proje kapsamıyla sınırlı yükseltilmiş PowerShell yürütmesiyle devam etti. Çalışma klasörünün boş olduğu görüldü; ben de sıfırdan başlanacağını netleştirdim.
+Çalışmanın başlangıcını 7 Ekim 2026 23:26:15 (Europe/Istanbul) olarak kaydettim. Hedef 3–4 saati gerçekleşmiş emek gibi yazmıyorum; geçen süre teslim kaydında belirtilir. Yapılmayan test veya kesin puan iddiası eklemiyorum.
+## Yönetim akışını doğrulamam
 
-Windows npm shim çözümlemesi Sites helper çağrılarında yanlış konumdan npm-cli arıyordu. Codex kurulumu global npm JavaScript girişinden yaptı; helper build için ignored, yalnız bu checkout'a ait npm shim kullandı. Framework veya plugin kaynaklarını bu sorunu gizlemek amacıyla değiştirmedik. Tek büyük PowerShell komutu Windows command-length sınırına takılınca yazımlar küçük partilere ayrıldı. Bu ortam sorunlarını uygulama hatası olarak raporlamıyorum.
+Yönetim girişi için değerlendirme hesabının kullanıcı adı/parola şartını korudum. İmzalı çerez kontrolünü yalnız arayüzde bırakmadık: kayıt API'si geçerli oturum olmadan veritabanı deposunu çağırmaz. Beş dakikalık giriş sınırını process belleği yerine PostgreSQL'e taşıdık; Vercel'in farklı function örneklerinde de aynı sayaç kullanılır. Anahtar, güvenilir Vercel IP başlığının HMAC özetiyle oluşturulur; ham IP saklanmaz.
 
-## 6. İlk sürümde doğrulanmış yerel sonuçlar
+Admin eklenince ilk tarayıcı turunda 18/21 geçti. İki alert seçicisi Next.js route announcer'ıyla, bir region seçicisi iki bölgeyle eşleşti. AI'ın önerdiği genel seçicileri gerçek hata paragrafı ve kaydırılabilir tablo bölgesiyle daraltarak değiştirdik. Son tam yerel ve canlı turlar 21/21 geçti. Bu hata arayüz mesajı veya erişilebilirlik duyurusu kaldırılarak gizlenmedi.
 
-Codex'in çalıştırdığı ilk D1/Sites sürümü kontrollerinin kaydedilmiş sonuçları:
+Gerçek Supabase kontrolünde yanlış okuma token'ı ve anonim tablo okuması 401 aldı. Aynı kurgusal limit anahtarına 11 paralel veritabanı çağrısında 10 izin ve 1 ret çıktı. Canlı sunucuda uydurulmuş ve süresi dolmuş oturumları, yabancı/eksik Origin'i, Secure çerezi ve çıkışı ayrıca kontrol ettik. Bu sonuçları mock testlerin başarısı yerine koymadım; iki katmanın kanıtını ayrı yazdım.
 
-- Node/gerçek SQLite: 28 test, 28 başarılı, 0 başarısız. `evidence/unit-tests.tap`.
-- Chromium: ilk 13 ve iki ek kenar senaryosu, toplam 15 başarılı. Ayrı JSON raporları `evidence/browser-results.json` ve `browser-edge-results.json`.
-- TypeScript: hatasız. Production Worker build: başarılı.
-- 320, 390, 768, 1440 px: yatay taşma yok; 200% masaüstü metin büyütme geçti.
-- Axe WCAG A/AA taraması: 0 otomatik ihlal. Bu sonucu kapsamlı manuel erişilebilirlik sertifikasyonu olarak sunmuyorum.
-- Gerçek tarayıcı POST kimliği `087f3e01-336c-429e-a0dc-78e992879895`, yerel D1 satırıyla ve dört ziyaretçi alanıyla eşleşti.
-- Kayıt sonrası yanıt kaybı test kimliği `c4a65dd0-b9bc-4469-96b0-2174d12f6666`; tekrar isteği 200/replayed verdi ve tek D1 satırı doğrulandı.
-- Tüm senaryolarda kurgusal test verisi kullanıldı. Hata simülasyonu kullanılan tarayıcı senaryolarını gerçek depolama testlerinden ayrı adlandırdık.
+Supabase security advisor raporunu da okuduk. Üç kapalı tabloda RLS policy bulunmaması bilgi düzeyi uyarı üretti; doğrudan tablo erişimi bilerek kapalı, işlemler sınırlı fonksiyonlardan geçiyor. SECURITY DEFINER fonksiyonlarının anon tarafından çağrılabilmesi ayrıca uyarı olarak göründü. Talep fonksiyonu açık form içindir; yönetim fonksiyonları veri okumadan önce ayrı sunucu token'ının özetini kontrol eder. Boş search_path, sabit sorgular, dar EXECUTE yetkileri ve gerçek ret testleriyle bu tercih doğrulandı. Raporun bütün uyarılarının kapandığını iddia etmiyorum. [RLS bildirimi](https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy) ve [anon SECURITY DEFINER bildirimi](https://supabase.com/docs/guides/database/database-linter?lint=0028_anon_security_definer_function_executable) bu tasarımın incelenecek sınırlarını açıklıyor.
 
-Canlı ortam sonuçlarını yerel testten türetmedim. İlk sürümün production HTTP ve D1 kontrolü aşağıdaki ayrı kanıtla gerçekleştirildi. Bu 28+15 sonuç yeni Supabase/Vercel sürümünün testleri değildir.
-
-İlk çalışma başlangıcını 7 Ekim 2026 23:26:15 (Europe/Istanbul) olarak kaydettim. Tamamlanma ve süre dış teslim kaydında belirtilir. Hedef 3–4 saat emek harcanmış gibi göstermiyorum. Geçmiş proje ve bireysel katkı için daha sonra BiLSTM repo bağlantımı ve model/kod yazarlığı beyanımı paylaştım.
-
-## 7. İlk D1/Sites sürümünün canlı doğrulaması
-
-İlk sürüm Sites üzerinde başarıyla yayımlandı. Yayın URL'si kayıt sırasında öngörülen domain'den farklı döndüğü için başarılı deployment'ın döndürdüğü URL'yi esas aldık. İlk sürümün canlı adresi https://vanta-cyber-intelligence.emrehanh00wb.chatgpt.site idi; bu adresin doğrulamasını Supabase/Vercel yayınıyla karıştırmıyorum.
-
-İlk canlı smoke kontrolü, WebP yanıtı application/octet-stream etiketli olduğu için katı MIME varsayımında durdu. Asset 200 ve 97.416 byte olarak sunuluyordu. Codex kontrolü kaynak WebP dosyasının byte içeriğiyle birebir eşleşme şartına çevirdi. Bu şekilde yanlış MIME etiketine rağmen dosyanın gerçek içeriği doğrulandı. İlk duruş kayıt oluşturmadan gerçekleşti; platform MIME sınırlaması ilk sürümün README'sinde belirtildi.
-
-İlk sürümün gerçek canlı kontrolü 2026-10-07T20:58:20Z'de tamamlandı: anonim sayfa 200, kaynakla eşleşen hero 200, POST 201, aynı UUID ve veri için 200/replayed, geçersiz e-posta için 422. Test verisi Ece Test / ece-test@example.com / risk-mapping ve kurgusal açıklamaydı.
-
-Codex bağımsız Sites `read_database_overview` ve `read_database_table_rows` araçlarıyla DB/service_requests satırını okudu. UUID `2da4c6b3-0b58-4524-bdd1-fb0fba2bb1f8`, isim/e-posta/hizmet/açıklama ve created_at gönderimle eşleşti. Bu kontrolü sunucu yanıtından ayrı bir kalıcılık kanıtı olarak kaydettim. `evidence/production-verification.json` ilk sürümün HTTP durumlarını ve doğrulanmış D1 satırını saklar.
-
-İlk sürümün son güvenlik kontrolünde formun native method'u açıkça POST yapıldı; JavaScript devre dışıysa alanların GET query string'ine taşınması engellendi. Zengin alan doğrulaması ve arayüz durumları JavaScript gerektirir; no-JS talebini başarılıymış gibi sunmadık.
-
-Kaynak arşivi, kesin teslim commit'i, son yayın sonucu, canlı satırın korunması ve gerçek toplam oturum süresi dış teslim kaydında izlenir. Eski teslim commit'i veya eski D1 kayıt kimliğini yeni Supabase/Vercel tesliminin kimliği olarak kullanmıyorum.
-
-## 8. Supabase, Vercel ve GitHub teslimini tamamlamam
-
-İlk sürümün tasarımını koruyup yayın/kayıt altyapısını standart Next.js, Vercel ve Supabase PostgreSQL'e taşıdım. Bu geçişi Codex ile uyguladım; alt ajanı migration'ın yetki/snapshot davranışını bağımsız incelemek ve depo sözleşmesi/HTTP transport testlerini güncellemek için kullandım. Belge düzenlemesini ayrı alt ajana verdim, canlı doğrulamayı ve son teslim eşleştirmesini ana çalışma akışında tamamladım. Bu iş paylaşımını kişisel elle kodlama iddiası olarak sunmuyorum.
-
-### Tercih ettiğim kayıt sınırı
-
-Geniş yetkili service-role anahtarını uygulamaya vermek yerine düşük yetkili publishable key ve yalnız talep oluşturma işlemini sunan RPC kullandım. Supabase'de ayrı `public.vanta_service_requests` tablosunu, UUID v4 birincil anahtarını, dört alanın CHECK kurallarını ve sunucunun ürettiği timestamptz alanını migration'a koydum. RLS'yi açtım; PUBLIC/anon/authenticated rollerinin doğrudan tablo erişimini kaldırdım. Diğer proje tablolarının yetkilerine dokunmadım.
-
-Anonim formun ihtiyaç duyduğu `vanta_submit_request` işlemini sınırlı `SECURITY DEFINER` fonksiyonla sundum: boş search_path, sabit şema adları, tipli argümanlar, dinamik SQL olmaması ve yalnız id/replayed dönüşü. PUBLIC EXECUTE'i kaldırıp bu signature'a anon/authenticated EXECUTE verdim. Böylece fonksiyonun oluşturma/replay yetkisini tablo listeleme/okuma/yazma yetkisinden ayırdım. Publishable key'in gizli olmadığını ve RPC'nin Vercel atlanarak çağrılabileceğini kabul ettim; aynı alan/hizmet/UUID kurallarını veritabanında da uyguladım. Origin kontrolünü bot önleme veya gizli anahtar gibi sunmadım.
-
-Tek SQL CTE ile INSERT/fallback SELECT birleştirme önerisini kullanmadım. PostgreSQL READ COMMITTED altında çakışan eşzamanlı kayıt statement snapshot'ında görünmeyebilirdi. VOLATILE PL/pgSQL fonksiyon içinde INSERT ve SELECT'i ayrı ifadeler olarak tuttum; değişen içerikte PT409 döndürdüm. Beş gerçek paralel HTTP isteği ve bağımsız SQL count=1 sonucu bu tercihi doğruladı. [PostgreSQL volatility](https://www.postgresql.org/docs/current/xfunc-volatility.html), [Supabase fonksiyon yetkileri](https://supabase.com/docs/guides/database/functions) ve [PostgREST hata eşlemesi](https://docs.postgrest.org/en/stable/references/errors.html) kaynaklarını kullandım. Supabase Advisor'ın anonim SECURITY DEFINER fonksiyon erişimi bildirimi bu dar oluşturma API'si için bilinçli bir tercihtir; genel bir 'tüm güvenlik uyarıları temiz' iddiasında bulunmadım.
-
-### Gerçek bulgular ve yaptığım düzeltmeler
-
-Migration incelemesinde `deniz\u0000@example.com` e-postasının eski validator'dan geçtiğini alt ajan gerçek Node çağrısıyla gösterdi. PostgreSQL text NUL kabul etmediği için hatanın depolamada 503'e dönüşmesini önlemek istedim. Codex ile ortak e-posta validator'ında kontrol karakterlerini reddettim ve regresyon testi ekledim. İsim/açıklama uzunluklarını Unicode kod noktası olarak saymayı PostgreSQL char_length ile uyumlu tuttum.
-
-İlk yeni tarayıcı turunda 8 test geçti, 7 test başarısız oldu. Gerçek gönderimde 127.0.0.1 Origin ile Next.js'in iç localhost URL'si karşılaştırılıyor, aynı siteden istek 403 oluyordu. Public Host/forwarded protocol üzerinden origin kontrolünü düzelttim; başka origin'in reddedildiğini ayrıca test ettim. Origin kontrolünü kaldırmadım.
-
-Diğer başarısızlıklar Next.js'in eklediği `__next-route-announcer__` alert'i ile form alert'inin global test seçicisinde çakışmasındandı. Testi form içindeki alert'e daralttım; erişilebilir duyuruyu veya kullanıcı hata mesajını gizlemedim. Düzeltmeden sonra aynı 15 tarayıcı testi yerel üretim derlemesinde gerçek Supabase ile geçti.
-
-Canlı izin kontrolü betiğimde önce anonim erişim reddi için yalnız 403 bekledim. Gerçek Supabase 401 döndürdü. Reddin 401/403 olarak eşlenebildiğini esas alıp kontrolü iki ret durumunu kabul edecek şekilde düzelttim; başarı/boş liste sonucunu ret gibi saymadım. Yeniden çalıştırdığım betik geçti. Vercel ortam API'sinde CLI'ye top-level array vermek Invalid JSON 400 üretti; API isteklerini belgelenen tek nesne biçimine çevirdim ve iki ortam değişkenini ayrı çağrılarla kaydettim.
-
-### Uyguladığım yayın akışı
-
-Mevcut Git Credential Manager oturumunun H00wb hesabına ait olduğunu doğrulayıp `H00wb/vanta-cyber-intelligence` public reposunu oluşturdum ve main branch'ini yükledim. Erişim anahtarlarını kaynak dosyalarına, komut argümanlarına veya AI_LOG'a eklemedim.
-
-Vercel bağlı araç çağrısı hesap kapsamı için403 döndürdü. Aynı H00wb/Bulyerleş hesabının mevcut Vercel CLI oturumuyla ilerledim; başka hesaba geçmedim. Ayrı VANTA projesini oluşturdum, link edilen proje kimliğini kontrol ettim, Next.js preset'ini ve npm ci/build akışını tanımladım. SUPABASE_URL ve SUPABASE_PUBLISHABLE_KEY değerlerini Production/Preview ortamlarına kaydettim. GitHub reposunu Vercel projesine bağladım ve production deployment'ı tamamladım. Node engine'i gelecekte otomatik büyük sürüm yükseltmesi olmaması için 24.x'e sabitledim.
-
-Canlı adresim: https://vanta-cyber-intelligence.vercel.app
-İncelenebilir kaynağım: https://github.com/H00wb/vanta-cyber-intelligence
-
-### Doğruladığım sonuçlar
-
-- 41 Node testi, lint, typecheck ve production build başarılı. SQLite fixture yalnız depo sözleşmesi test çiftidir; mocked fetch testi PostgreSQL/RLS entegrasyonu olarak sunulmaz.
-- 15 yerel Chromium senaryosu: derlenmiş Next.js → gerçek uzak Supabase. 15/15 başarılı.
-- 15 canlı Chromium senaryosu: public Vercel → gerçek Supabase. 15/15 başarılı. Mobil genişlikler, loading kilidi, doğrulama, gerçek başarı, 503/offline/HTML/yanlış kimlik/timeout, yanıt kaybından sonra replay, klavye, axe ve %200 metin büyütme kontrol edildi.
-- Canlı HTTPS: yeni kayıt 201, aynı içerik 200/replayed, değişen içerik 409, geçersiz alan/NUL e-posta 422, GET 405; beş paralel gönderimde bir 201 ve dört 200.
-- Anonim doğrudan tablo SELECT/INSERT 401 ile reddedildi. Geçersiz doğrudan RPC 400 döndürdü. RLS açık, anon/authenticated table SELECT/INSERT grants kapalı olarak bağımsız SQL ile okundu.
-- Normal, paralel ve yanıt kaybı fixture'larının dört alanını/zamanını bağımsız Supabase SQL ile karşılaştırdım; her kimlik için satır sayısı 1. HTTP ve tarayıcı sonucunu tek başına kalıcılık kanıtı saymadım.
-
-Kanıtlar `evidence/supabase-unit-tests.tap`, `supabase-browser-results.json`, `supabase-local-records.json`, `vercel-browser-results.json`, `previous-supabase-production-verification.json` ve `supabase-production-records.json` dosyalarındadır. Bu bölüm önceki ortak Supabase projesinin teslimidir; sonraki browser fixture/HTTP dosyaları ayrı projeye ait güncel sonuçlarla yenilendi. Yalnız kurgusal test verisi kullandım. Son teslim commit'ini, arşiv eşleşmesini, yeniden deployment sonrasında kaydın korunmasını ve gerçek geçen oturum süresini dış TESLIM.txt kaydında belirtiyorum; commit'in kendisini kendi içeriğine yazmaya çalışmıyorum.
-
-Çalışmayı ölçütler ve somut kanıtlarla teslim ediyorum. Gerçek cihaz/ekran okuyucu manuel testi, geçmiş modelin yeniden eğitimi veya kesin 100 puan iddiası eklemiyorum. İlk D1/Sites sürümünün sonuçlarını tarihsel bırakıyorum; Supabase/Vercel sonuçlarını burada ayrı kaydediyorum.
-## 9. Ayrı Supabase projesini bağlamam ve SSR yardımcılarını eklemem
-
-Bağlantıyı hesabımdaki ayrı `vanta-cyber-intelligence` projesine (`fjzgkdymkltwvofbkubr`) taşıdım. Önce sahipliği, mevcut tablo/RPC'yi, CHECK kurallarını, VOLATILE davranışını ve kapalı anon/authenticated tablo yetkilerini kontrol ettim. Şema zaten hazır olduğu için aynı CREATE migration'ını tekrar uygulamadım ve önceki projenin kayıtlarını silmedim.
-
-Codex ile `@supabase/supabase-js@2.117.3` ve `@supabase/ssr@0.12.7` paketlerini sabit sürümlerle kurdum, lockfile'ı güncelledim. NEXT_PUBLIC_SUPABASE_URL ve NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY değerlerini yerelde ve Vercel Production/Preview'da tanımladım. Publishable key'in düşük yetkili/public niteliğini korudum; service-role/secret kullanmadım.
-
-Paylaşılan SSR örneğini Next.js 16'ya uyarladım: browser/server istemcilerini `utils/supabase` altında, oturum yenilemeyi root `proxy.ts` ile kurdum. Örnekteki cookie köprüsünü koruyup eksik gerçek `getClaims()` çağrısını ekledim. Güncel SDK'nın setAll ikinci argümanındaki Cache-Control/Expires/Pragma başlıklarını aynı cookie taşıyan response'a aktardım. İstemciyi sunucuda her istek için yeniden oluşturdum; API ve statik dosyaları matcher dışında tuttum. VANTA landing page tasarımını korudum; örnekteki todos listesini ürün sayfasına dönüştürmedim. Talep kaydını anonim RPC üzerinden, Auth session cookie/JWT'sinden bağımsız tuttum.
-
-`migration_review` alt ajanına cookie/cache sözleşmesi ve eşzamanlı istek izolasyonunu sınayan altı test eklettim. 47 Node testi geçti. Bu altı test mock SDK ile getClaims çağrısı, yenilemenin beklenmesi, cookie chunk/options, request/response aktarımı, cache başlıkları, anonim yönlendirmesiz devam ve istemci izolasyonunu doğrular; gerçek Auth kullanıcısı ile giriş/expired-session yenilemesi yapıldığı iddiasını eklemiyorum.
-
-Yerel üretim build'i, typecheck ve lint geçti; Proxy build çıktısında tanındı. Yeni proje üzerinde normal POST201 ve bağımsız SQL satırı doğrulandı. Proxy etkin halde 15 yerel Chromium testi gerçek yeni Supabase ile geçti. Vercel Production/Preview ortamını yeni iki NEXT_PUBLIC değişkeniyle yapılandırıp GitHub main üzerinden canlıya çıkardım. Canonical URL'nin yeni commit ile READY olduğunu kontrol ettim. Canlı HTTPS betiği ve Proxy etkin halde 15 canlı Chromium testi de geçti.
-
-Yeni projedeki canlı kontrolü 2026-10-07T22:52:07Z'de tamamladım: yeni talep201, aynı içerik200/replayed, farklı içerik409, geçersiz alan/NUL422, GET405; beş paralel istekte bir201/dört200. Publishable key ile doğrudan tablo SELECT/INSERT401, geçersiz RPC400 döndü. Normal, paralel, browser normal ve yanıt kaybı/replay kimliklerini bağımsız Supabase SQL ile okuyup dört alanı ve sunucu timestamp'lerini karşılaştırdım; her kimlik count=1, RLS açık ve anon/authenticated tablo SELECT/INSERT yetkileri kapalı.
-
-Güncel kanıtlarım: `evidence/ssr-unit-tests.tap` (47/47), `ssr-local-browser-results.json` (15/15), `ssr-local-records.json`, `ssr-vercel-browser-results.json` (15/15), `supabase-production-verification.json`, `ssr-production-records.json`, `vercel-submit.json` ve `vercel-lost-response.json`. Eski projenin HTTP kanıtını `previous-supabase-production-verification.json` olarak korudum. TEST_REHBERI.txt'de güncel proje ve dört kayıt UUID'sini paylaştım; kurgusal test verisi dışında veri kullanmadım.
-
-Git push önce non-fast-forward ile reddedildi. Uzak AI_LOG düzenlemelerini fetch/rebase ile korudum, yalnız belgenin sonunda çıkan çakışmayı çözdüm ve yeni SSR bölümünü güncel numaraya uyarladım; force push kullanmadım. Vercel ortam değişkenleri zaten var olduğu için create çağrısı400 döndü; mevcut değişken kimliklerini ve doğru hesap/proje kapsamını kontrol ederek PATCH ile güncelledim. Bu araç yanıtlarını uygulamanın form hatası gibi sunmuyorum. Teslim commit'i, kaynak arşivi ve son yeniden yayın sonrası kalıcılık doğrulamasını dış teslim kaydında belirtiyorum.
-
-Kaynak olarak güncel [Supabase SSR rehberini](https://supabase.com/docs/guides/auth/server-side/creating-a-client), [cache güvenliği rehberini](https://supabase.com/docs/guides/auth/server-side/advanced-guide) ve [Next.js Proxy dosya kuralını](https://nextjs.org/docs/app/api-reference/file-conventions/proxy) kullandım. Optional skills kurulumunu ayrıca tekrarlamadım; mevcut Supabase becerisini ve resmi dokümanları kullandım.
+Sonuçları JSON yığınları yerine okunabilir CANLI_DOGRULAMA.md ve TEST_SONUCLARI.md belgelerine taşıdım. Kanıt ekranları yalnız yeni kurgusal kayıtları içerir. Kontrol sonunda bu turda oluşturulan 15 test satırını yalnız kayıt kimlikleri ve kurgusal alanlarıyla eşleştirerek temizledik. Mevcut tek kayıt korundu; temizlik öncesi ve sonrası bütün satır özeti eşleşti. Ekrandaki test kimliklerinin temizlikten sonra bulunmayacağını açıkça yazdım.

@@ -1,84 +1,238 @@
 VANTA — TEST REHBERİ
-===================
-Canlı site: https://vanta-cyber-intelligence.vercel.app
-Kaynak: https://github.com/H00wb/vanta-cyber-intelligence
-Yalnız kurgusal isim/e-posta/açıklama kullanın. Örnek: Deniz Örnek / deniz@example.com.
 
-1. KURULUM
-Node.js 24.x kurulu olmalı. Kaynak depoyu klonlayıp klasöründe:
+Canlı site: https://vanta-cyber-intelligence.vercel.app
+Kaynak kod: https://github.com/H00wb/vanta-cyber-intelligence
+Yönetim sayfası: https://vanta-cyber-intelligence.vercel.app/admin
+Demo giriş: admin / admin123
+
+Güncel yeniden kontrol:
+Node testleri: 75
+Tarayıcı testleri: yerel 21/21 ve canlı 21/21
+Canlı kontrol zamanı: 8 Ekim 2026, 03:32 (Europe/Istanbul)
+
+Aşağıda “beklenen sonuç”, kontrolün kabul şartıdır. Bir testin geçmişte
+geçmesi, eski satırın bugün veritabanında bulunduğu anlamına gelmez.
+Önceki test turlarının kayıtları sonradan temizlendi. Güncel kontrolü canlı
+sayfa ve yönetim panelindeki mevcut kayıt üzerinden yapın.
+
+1. KOD ÇALIŞTIRMADAN CANLI İNCELEME
+
+a) Siteyi masaüstünde ve telefonda açın. VANTA'nın kime yardımcı olduğunu,
+   dört hizmeti ve talep düğmesini görebilmelisiniz. Dar ekranda yatay taşma
+   olmamalı; form alanları ve gönderim düğmesi rahatça kullanılabilmeli.
+
+b) Formu boş gönderin. İlgili alanlarda anlaşılır hata görünmeli ve odak
+   ilk hatalı alana gitmeli. Geçerli kayıt veya başarı mesajı oluşmamalı.
+
+c) Önce mevcut kaydı incelemek için doğrudan /admin adresini açın.
+   Ana sayfada yönetim bağlantısı yoktur. admin / admin123 ile giriş yapın.
+   Demo bilgileri herkese açıktır; üretim gizliliği sağlayan hesap değildir.
+
+d) Panelde mevcut kaydın kimliğini, dört alanını ve kayıt zamanını inceleyin.
+   Kimliği kopyalayıp filtreye yapıştırın. Sayfayı yenileyin: aynı kayıt ve
+   değerler tekrar veritabanından gelmeli. Mevcut kaydı silmeyin veya değiştirmeyin.
+   Ekran görüntüsü paylaşırken gerçek kişinin isim ve e-postasını maskeleyin.
+
+e) Yeni gönderimi kontrol edecekseniz yalnız şu kurgusal bilgileri kullanın:
+   İsim: Deniz Örnek
+   E-posta: deniz@example.com
+   Hizmet: Attack Surface Management
+   Açıklama: Kurgusal kurumumuzun internete açık test varlıklarını değerlendirmek istiyoruz.
+
+   Gönderim sırasında düğme/form kilitlenmeli. Başarı mesajından UUID'yi
+   kopyalayın; panelde bu kimliği arayın. Dört alanı karşılaştırın:
+   name, email, service ve description. Kayıt zamanı sunucuda oluşmuş olmalı.
+   E-posta küçük harfe çevrilir; alan başı/sonu boşlukları temizlenir.
+   Paneli ve tarayıcıyı yenileyince kayıt korunmalı.
+
+f) Panel salt okunurdur. Değerlendirme sırasında yeni kurgusal kayıt açmak
+   zorunlu değildir. Otomatik kontrollerin kendi satırlarını temizlemesi,
+   mevcut kullanıcı kaydını silmesi anlamına gelmez.
+
+2. KENDİ ORTAMINDA ÇALIŞTIRMA
+
+Node.js 24.x gerekir. Proje klasöründe:
+
   npm ci
-.env.example dosyasını .env.local olarak kopyalayın; NEXT_PUBLIC_SUPABASE_URL ve NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY değerlerini girin. Güncel teslim projesi: fjzgkdymkltwvofbkubr.
-Supabase SQL Editor'de supabase/migrations/20261007212753_vanta_requests.sql dosyasını yeni kurulumda bir kez çalıştırın. Mevcut teslim projesinde zaten uygulanmıştır.
+
+.env.example dosyasını .env.local olarak kopyalayın. Kendi projenize ait
+NEXT_PUBLIC_SUPABASE_URL ve NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY değerlerini girin.
+Yeni Supabase projesinin SQL Editor'ünde sırayla uygulayın:
+
+  supabase/migrations/20261007212753_vanta_requests.sql
+  supabase/migrations/20261008000924_vanta_admin_read_access.sql
+
+Daha önce uygulanmış migration'ı tekrar çalıştırmayın. CLI kullanıyorsanız
+supabase link ile doğru projeyi bağlayıp supabase db push çalıştırabilirsiniz.
+
+Yönetim ortamını hazırlayın:
+
+  node scripts/setup-admin.mjs
+
+Yardımcı, demo kullanıcıyı, scrypt parola özetini, oturum imzalama anahtarını
+ve ayrı DB okuma token'ını .env.local'a yazar:
+ADMIN_USERNAME, ADMIN_PASSWORD_HASH, ADMIN_SESSION_SECRET, ADMIN_DB_READ_TOKEN.
+Üretilen .test-results/admin-access.sql dosyasını migration'lardan sonra
+SQL Editor'de uygulayın; veritabanına token'ın yalnız SHA-256 özeti gider.
+Bu ortam değerlerini, yerel SQL çıktısını ve oturum çerezlerini paylaşmayın.
+Supabase service-role anahtarı kullanılmaz.
+
+  npm run dev
+
+Yerel adres: http://127.0.0.1:5173
+
+Üretim davranışını kontrol etmek için:
   npm run build
   npm run start
-Yerel adres: http://127.0.0.1:5173 . Başka terminalde test komutları çalıştırılır.
-Bu yerel uygulama da ayarladığınız gerçek Supabase projesine yazar.
 
-2. OTOMATİK KONTROLLER
+Yerel uygulama da ayarladığınız gerçek Supabase'e yazar. Testlerin gerçek
+kayıt oluşturduğunu dikkate alın; yalnız kurgusal veri kullanın.
+
+75 Node ve 21 tarayıcı testinin ayrı ayrı açıklaması TEST_SONUCLARI.md içindedir.
+Ekran görüntülerini CANLI_DOGRULAMA.md üzerinden inceleyebilirsiniz.
+
+3. OTOMATİK KONTROLLERİ ÇALIŞTIRMA
+
   npm test
   npm run lint
   npm run typecheck
+  npm run build
   npx playwright install chromium
+  npm run start
+
+Sunucu açıkken ayrı terminalde:
   npm run test:e2e
-Beklenen: 47 Node testi ve 15 Chromium testi başarılı.
-Node testlerindeki SQLite fixture/mock HTTP gerçek PostgreSQL kanıtı değildir. Altı SSR testi mock SDK ile getClaims, cookie/cache aktarımı ve istek izolasyonunu sınar; gerçek Auth giriş/expired-session yenilemesi sınanmadı.
-Chromium akışındaki gerçek form gönderimleri Supabase'e kurgusal kayıt oluşturur.
 
-Canlı Chromium testi, Windows PowerShell (yeni kurgusal kayıtlar oluşturur):
-  $env:TEST_BASE_URL='https://vanta-cyber-intelligence.vercel.app'
-  $env:TEST_REPORT_FILE='evidence/ssr-vercel-browser-results.json'
-  npm run test:e2e
-Yerel teste geri dönmek için bu iki ortam değişkenini kaldırın.
+Node testlerinin ana kısmı geçici SQLite test deposu veya taklit fetch/SDK
+kullanır. Gerçek PostgreSQL'e gönderim yaptığı varsayılmamalıdır. Tarayıcı
+senaryolarının geçerli form gönderimi ve kayıp yanıt testleri ise
+yapılandırılmış gerçek Supabase'e kayıt oluşturur. Kayıtları yalnız API
+yanıtından değil, panelde UUID ve alan karşılaştırmasıyla da doğrulayın.
 
-Canlı HTTP + erişim kontrolü (.env.local'da Supabase değerleri gerekli):
-  node --env-file=.env.local scripts/verify-production.mjs https://vanta-cyber-intelligence.vercel.app
-Beklenen: passed=true; yeni kayıt 201, tekrar 200, değişen içerik 409, geçersiz alan422, GET 405, beş paralel istekte bir 201 ve dört 200. Anonim tablo okuma/yazma401 veya403 ile reddedilir; geçersiz doğrudan RPC 400.
-Betik yeni fixture kimlikleri oluşturur. Bağımsız SQL okumasını aşağıdaki gibi ayrıca yapın.
+4. ALAN VE API TESTLERİ NEYİ KONTROL EDİYOR?
 
-3. MASAÜSTÜ / MOBİL MANUEL KONTROL
-Chrome'da siteyi açın; F12 cihaz görünümünde 320,390,768,1440 px genişlikleri deneyin.
-Yatay taşma olmamalı; menü bağlantıları doğru bölüme gitmeli; form okunabilir ve erişilebilir olmalı.
-Tab ile skip-link, bağlantılar ve alanlar gezilmeli; odak görünmeli.
-Metni %200 büyütün. Sayfa ve form kullanılabilir kalmalı.
+tests/request.test.mjs içindeki mevcut senaryolar:
 
-4. ALAN DOĞRULAMASI
-Boş formu gönderin: hata görünmeli, ilk hatalı alana odaklanmalı; ağda POST olmamalı.
-İsim1 veya101 karakter, geçersiz e-posta, hizmet seçmeme, açıklama19 veya2001 karakter reddedilmeli.
-Geçerli sınırlar: isim2/100; açıklama20/2000. Unicode kod noktası sayılır.
-İstemciyi atlayan otomatik API testleri de geçersiz alanları422 ile reddeder.
+- Dört hizmet değeri kabul edilir; kenar boşlukları temizlenir ve e-posta
+  küçük harfe çevrilir.
+- Şu 13 geçersiz örnek ayrı ayrı sınanır: boş isim, 101 karakter isim,
+  hatalı e-posta, fazla uzun e-posta, NUL içeren e-posta, bilinmeyen hizmet,
+  kısa açıklama, 2001 karakter açıklama, isimde kontrol karakteri,
+  açıklamanın sayı olması, geçersiz UUID, tek emoji isim ve on emoji açıklama.
+  Beklenen: 422, ilgili alan hatası, depo açılmadan ret ve sıfır kayıt.
+- İki emoji isim/20 emoji açıklama ile 100 karakter isim/2000 karakter
+  açıklama sınırları kabul edilir.
+- null, dizi, metin, boş nesne veya eksik alanlı gövde reddedilir.
+- Yeni kaydın 201 yanıtı, test deposundaki dört alan ve zamanla eşleşir.
+- Depo işlemi bitmeden API başarı dönmez.
+- Depodan null, eksik yanıt, yanlış kimlik veya yanlış türde replayed
+  gelirse başarı oluşmaz; 503 döner.
+- Aynı kimliğin üç eşzamanlı gönderimi bir satır bırakır:
+  bir 201 ve iki 200 beklenir. Bu test SQLite sözleşme testidir.
+- Aynı kimlikle değişen içerik 409 alır; ilk satır korunur.
+- SQL/HTML benzeri açıklama çalıştırılmaz; aynen veri olarak saklanır.
+- Depolama hatası 503 verir; iç hata veya başarılı kayıt kimliği sızmaz.
+- Bozuk JSON 400, yanlış içerik türü 415, farklı origin 403 alır.
+- 16 KiB gövde sınırı Content-Length olmadan da gerçek byte sayısıyla uygulanır.
+- GET 405 alır; talep verileri okunamaz.
+- Yanlış HTTP durumlu, eksik veya farklı kimlikli yanıt başarı sayılmaz.
+- Geçici SQLite dosyası kapatılıp açılınca test kaydı korunur. Bu, gerçek
+  PostgreSQL kalıcılık kanıtının yerine geçmez.
+- Next.js/proxy ortamında dış Host ve forwarded HTTPS Origin kabul edilir;
+  yabancı Origin yine reddedilir.
 
-5. GERÇEK BAŞARI VE KALICILIK
-Deniz Örnek, deniz@example.com, Attack Surface Management,
-'Kurgusal kurumun internete açık dijital varlıklarını değerlendirmek istiyoruz.' ile gönderin.
-Gönderiliyor durumu ve düğme kilidi görünmeli; başarı yalnız API201/200 ve doğrulanmış kimlik sonrası görünmeli.
-DevTools Network'te POST/api/requests yanıtındaki id'yi alın.
-Supabase SQL Editor'de kendi test id'nizi kullanın:
-  select id,name,email,service,description,created_at
-  from public.vanta_service_requests where id='TEST_UUID';
-  select count(*) from public.vanta_service_requests where id='TEST_UUID';
-Dört alan ve timestamp doğru, count=1 olmalı. Sayfa yenilemesi veya Vercel redeploy sonrası aynı SQL kaydı durmalı.
-Tablo ziyaretçilere açılmaz; bu SQL kontrolü yetkili Supabase panelindendir.
+5. SUPABASE BAĞLANTISI TESTLERİ NEYİ KONTROL EDİYOR?
 
-Teslim fixture'ları:
-HTTP normal: 5a2de20c-31ab-434a-9f4c-3e59caa13695
-HTTP paralel: a28c2c3b-4aa1-45b3-9472-a002fcfb8e23
-Canlı browser normal: 990cd606-4ede-46c4-bfcf-33466c31ba92
-Canlı browser yanıt kaybı/tekrar: fdbad782-708b-4514-a2b7-e5b43cccba71
-Kanıt: evidence/ssr-production-records.json (her id için tek satır).
+tests/supabase-store.test.mjs taklit fetch kullanır:
 
-6. HATA / TEKRAR / KAYIT GİZLİLİĞİ
-Chromium suite;503, offline, HTML yanıt, yanlış id, 15 sn timeout ve gerçek commit sonrası yanıt kaybını kontrol eder.
-Başarı görünmemeli; girilen bilgi kalmalı; belirsiz gönderim açıklaması okunabilir olmalı.
-Yanıt kaybı sonrası aynı verilerle tekrar 200/replayed döndürmeli ve tek satır kalmalı.
-Aynı id + farklı içerik 409 olmalı; ilk kayıt değişmemeli.
-Doğrudan GET/api/requests405 olmalı; kayıt listesi dönmemeli.
-Supabase publishable key ile tablo SELECT/INSERT reddedilir. RLS açıktır; anon/authenticated table grants kapalıdır.
-Anonim vanta_submit_request RPC kasıtlı olarak talep oluşturabilir; doğrudan çağrı da DB CHECK kurallarına tabidir.
+- RPC'ye yalnız bir HTTPS POST gider; beş argüman, apikey, JSON içerik türü,
+  no-store ve zaman aşımı sinyali doğru taşınır.
+- Tekrar kayıt sonucu yeni kayıt gibi değiştirilmez.
+- 409, tanımlı kimlik çakışması hatasına çevrilir.
+- 400/401/403/503 iç veritabanı ayrıntısını kullanıcıya taşımaz.
+- Yanlış, eksik veya başka kimlikli JSON kaydı doğrulayamaz.
+- Boş, bozuk veya HTML biçimli 200 yanıtı başarı sayılmaz.
+- Gövdesiz 204 de kayıt doğrulaması değildir.
+- Ağ hatası ve iptal/zaman aşımı başarılı depo sonucuna dönüşmez.
+- Geçersiz Supabase adresi veya boş anahtar ağ çağrısından önce reddedilir.
 
-7. SONUÇ VE TESLİM
-47 Node,15 yerel Chromium,15 canlı Chromium başarılıdır; lint,typecheck ve production build geçti.
-Güncel kanıtlar: evidence/ssr-unit-tests.tap, ssr-local-browser-results.json, ssr-local-records.json, ssr-vercel-browser-results.json ve ssr-production-records.json. Raporların hedef ortam/tarih bilgilerine bakın. D1/Sites ve önceki ortak Supabase projesi raporları tarihsel kanıttır.
-AI_LOG birinci ağızda teknik kararları, AI katkısını, gerçek bulguları ve doğrulamayı açıklar.
-Kesin commit: git rev-parse HEAD. Uzak eşleşme: git ls-remote origin refs/heads/main.
-Son commit, kaynak ZIP ve redeploy sonrası kayıt kanıtı TESLIM.txt / teslim paketindedir.
-Testleri geçti diye kesin 100 puan veya tüm gerçek cihaz/ekran okuyucu koşulları garanti edilmez.
+6. SSR YARDIMCI TESTLERİ NEYİ KONTROL EDİYOR?
+
+tests/supabase-session.test.mjs taklit SDK kullanır:
+
+- İstemci doğru public ortam değerleriyle oluşur ve getClaims çağrılır.
+- Yenileme bitmeden güncellenmiş cookie yanıtı dönmez.
+- Cookie parçaları, seçenekleri ve request/response aktarımı korunur.
+- SDK cache başlıkları cookie taşıyan aynı yanıtta kalır.
+- Oturumsuz ziyaretçi ana sayfayı giriş yönlendirmesi olmadan kullanır.
+- Eşzamanlı istekler ayrı istemci ve cookie kullanır.
+
+Bunlar Supabase Auth ile gerçek kullanıcı giriş/yenileme testi değildir.
+Yönetim panelinin özel imzalı oturumu ayrı bir erişim mekanizmasıdır.
+
+7. TARAYICI SENARYOLARI NEYİ KONTROL EDİYOR?
+
+e2e/site.spec.ts içindeki form ve sayfa kontrolleri:
+
+- 320, 390, 768 ve 1440 px genişliklerde başlık/CTA/form görünür; yatay taşma yoktur.
+- Geçersiz alanlar POST başlatmaz; odak ilk hatalı alana gider.
+- Gönderiliyor durumunda tekrarlayan tıklama yeni istek başlatmaz.
+  Gerçek 201 yanıtından sonra doğru kayıt kimliğiyle başarı gösterilir.
+- Simüle edilen 503'te alanlar korunur ve başarı gösterilmez.
+- Offline gönderimde alanlar korunur; bağlantı dönünce değişmemiş talep
+  aynı UUID ile tekrar denenir.
+- HTML hata yanıtında anlaşılır mesaj görünür; JSON parser ayrıntısı görünmez.
+- HTTP 200 dönse bile yanlış kayıt kimliği başarı sayılmaz.
+- Doğrudan API isteğinde geçersiz alan 422 alır.
+- Klavye ile skip-link ve form etiketleri kullanılabilir; axe WCAG A/AA
+  taraması uygulanır. Bu tarama tüm erişilebilirliği tek başına kanıtlamaz.
+- Metin %200 büyütüldüğünde form görünür ve sayfa yatay taşmaz.
+- Sunucu gerçekten kaydettikten sonra yanıt kasıtlı kaybedilir. Tekrar
+  gönderim aynı UUID için 200/replayed almalıdır. Tek satır kaldığı ayrıca
+  veritabanından kontrol edilir.
+- 15 saniyelik tarayıcı zaman aşımında belirsiz sonuç mesajı gösterilir,
+  alanlar korunur ve düğme tekrar kullanılabilir.
+
+Hata taklidi yapılan senaryolar depolama başarısı diye sunulmaz. Normal
+gönderim ve yanıt kaybı senaryoları, doğru ortamla çalıştırıldığında gerçek
+veritabanına gider.
+
+8. YÖNETİM ERİŞİMİNİ KONTROL ETME
+
+Bu bölüm yeni yönetim akışının kabul şartlarını tanımlar; güncel koşu
+sonuçları üstteki kontrol kaydına işlenir.
+
+- Oturumsuz /admin erişiminde giriş ekranı görülür; kayıtlar gösterilmez.
+- Yanlış kullanıcı/parola genel hata verir; kayıt listesi veya çerez oluşmaz.
+- Doğru demo girişinden sonra tablo açılır. Oturum çerezi HttpOnly,
+  SameSite=Strict ve HTTPS'te Secure olmalı; ömrü bir saattir.
+- UUID filtresi yalnız ilgili kaydı getirir; yenileme aynı satırı korur.
+  Panelde dört alan, tarih, sayfalama ve salt okunur davranış kontrol edilir.
+- Çıkıştan sonra kayıtlar okunamaz. Geçersiz veya süresi dolmuş oturum,
+  kayıt API'sine erişim sağlamaz.
+- Yabancı origin ile giriş/çıkış kabul edilmez.
+- Aynı kaynaktan beş dakikadaki giriş denemeleri onla sınırlanır; sınırda
+  429/yeniden deneme bilgisi beklenir.
+- Veritabanı erişimi başarısızsa anlaşılır hata görünür; boş tablo
+  gösterilerek başarılı okuma yapılmış gibi davranılmaz.
+- Okuma token'ı ve parola özeti tarayıcıya veya hata yanıtına taşınmaz.
+- Publishable key ile doğrudan tablo okuma/yazma yine reddedilir.
+  Yönetim listeleme RPC'si doğru sunucu token'ı olmadan satır döndürmez.
+
+Bu kontrolleri mevcut kullanıcı satırını değiştirerek veya silerek yapmayın.
+
+9. SONUÇ NASIL KAYDEDİLİR?
+
+Kontrol tarihini, kullanılan yayın/commit'i, senaryoyu, beklenen sonucu ve
+gördüğünüz sonucu ayrı yazın. Başarı mesajındaki UUID'nin paneldeki dört
+alan ve zamanla eşleşmesi kalıcılık için somut kanıttır. Geçmiş test UUID'lerini
+bugün mevcut satır gibi listelemeyin.
+
+Yeni otomatik kontroller yalnız kendi oluşturduğu kurgusal kayıtları
+temizleyebilir. Mevcut kullanıcı kaydı korunur. Kanıt ekranlarında gerçek
+isim/e-posta yayımlanmaz. Makine raporunu okumak yerine önce bu rehberin
+adımlarıyla canlı davranışı inceleyebilirsiniz.
+
+Teslim commit'i ve kaynak arşivi son teslim kaydında belirtilir. Testler
+belirli davranışları doğrular; kesin puan veya bütün olası koşullarda
+hatasız çalışma iddiası değildir.
