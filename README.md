@@ -10,7 +10,7 @@ VANTA, güvenlik liderlerine, SOC ve BT ekiplerine siber tehdit istihbaratı, sa
 - [AI ile çalışma kaydı](AI_LOG.md)
 - [Gereksinim karşılıkları](DEGERLENDIRME.md)
 
-Admin paneli kullanıcı adı: admin
+Admin paneli kullanıcı adı: admin, 
 Admin paneli şifre: admin123
 
 ## Ürün
