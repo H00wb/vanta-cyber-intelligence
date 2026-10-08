@@ -1,6 +1,14 @@
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { writeFileSync } from "node:fs";
+import { recordFixture } from "./fixture-log";
+test.beforeEach(async ({ page }) => {
+  page.on("request", request => {
+    if (request.method() === "POST" && request.url().endsWith("/api/requests")) {
+      try { recordFixture(request.postDataJSON().requestId); } catch {}
+    }
+  });
+});
 const production = process.env.TEST_BASE_URL?.startsWith("https://") ?? false;
 const environment = production ? "Vercel production / real Supabase Postgres" : "Next.js local / real Supabase Postgres";
 const description = "Kurgusal test kurumunun internete açık dijital varlıklarını değerlendirmek istiyoruz.";
@@ -32,18 +40,19 @@ test("client validation blocks network request and focuses first invalid field",
 test("loading state locks resubmission and success follows real API response", async ({ page }) => {
   await open(page); await fill(page); let posts = 0;
   page.on("request", req => { if (req.url().endsWith("/api/requests")) posts++; });
-  await page.route("**/api/requests", async route => { await new Promise(resolve => setTimeout(resolve, 700)); await route.continue(); });
+  await page.route("**/api/requests", async route => { await new Promise(resolve => setTimeout(resolve, 1200)); await route.continue(); });
   const saved = page.waitForResponse(response => response.url().endsWith("/api/requests") && response.request().method() === "POST");
   await page.getByRole("button", { name: "Talep gönder" }).click();
   await expect(page.getByRole("button", { name: "Gönderiliyor…" })).toBeDisabled();
   await expect(page.locator("form")).toHaveAttribute("aria-busy", "true");
+  await page.locator("form").screenshot({ path: "evidence/form-sending.png" });
   await page.locator("form").evaluate(form => (form as HTMLFormElement).requestSubmit());
   const response = await saved; expect(response.status()).toBe(201); const body = await response.json();
   const payload = response.request().postDataJSON(); expect(body.id).toBe(payload.requestId);
   await expect(page.getByText("Talebiniz kaydedildi.", { exact: true })).toBeVisible(); expect(posts).toBe(1);
   await expect(page.getByLabel(/Ad soyad/)).toHaveValue("");
-  writeFileSync(production ? "evidence/vercel-submit.json" : "evidence/local-submit.json", JSON.stringify({ environment, id: body.id, status: response.status(), payload }, null, 2));
-  await page.screenshot({ path: "evidence/form-success.png", fullPage: false });
+  writeFileSync(production ? ".test-results/vercel-submit.json" : ".test-results/local-submit.json", JSON.stringify({ environment, id: body.id, status: response.status(), payload }, null, 2));
+  await page.locator("form").screenshot({ path: "evidence/form-success.png" });
 });
 test("503 response preserves input and cannot display success", async ({ page }) => {
   await open(page); await fill(page);
@@ -52,6 +61,7 @@ test("503 response preserves input and cannot display success", async ({ page })
   await expect(page.locator("form").getByRole("alert")).toContainText("doğrulanamadı");
   await expect(page.getByLabel(/Ad soyad/)).toHaveValue("Deniz Örnek");
   await expect(page.getByLabel(/İhtiyacınızdan bahsedin/)).toHaveValue(description);
+  await page.locator("form").screenshot({ path: "evidence/form-error.png" });
   await expect(page.getByText("Talebiniz kaydedildi.")).toHaveCount(0);
 });
 test("offline failure preserves form; same unchanged request reuses id", async ({ page }) => {
@@ -110,7 +120,7 @@ test("lost response after real commit retries as one persisted request", async (
   const response = await retried; expect(response.status()).toBe(200);
   const body = await response.json(); expect(body).toEqual({ id: savedId, replayed: true });
   await expect(page.getByText("Talebiniz kaydedildi.", { exact: true })).toBeVisible();
-  writeFileSync(production ? "evidence/vercel-lost-response.json" : "evidence/lost-response.json", JSON.stringify({ environment, id: savedId, retryStatus: response.status(), replayed: body.replayed }, null, 2));
+  writeFileSync(production ? ".test-results/vercel-lost-response.json" : ".test-results/lost-response.json", JSON.stringify({ environment, id: savedId, retryStatus: response.status(), replayed: body.replayed }, null, 2));
 });
 test("15 second timeout reports uncertainty and preserves user input", async ({ page }) => {
   await open(page); await fill(page);

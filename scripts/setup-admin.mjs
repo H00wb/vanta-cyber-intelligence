@@ -1,0 +1,17 @@
+import {readFileSync,writeFileSync,mkdirSync,existsSync} from 'node:fs';
+import {randomBytes,createHash} from 'node:crypto';
+import {hashAdminPassword} from '../lib/admin-auth.ts';
+const path='.env.local';
+if(!existsSync(path))throw Error('Önce .env.example dosyasını .env.local olarak kopyalayın.');
+const source=readFileSync(path,'utf8');
+const get=key=>source.split(/\r?\n/).find(line=>line.startsWith(key+'='))?.slice(key.length+1).replace(/^"|"$/g,'');
+const reset=process.argv.includes('--reset');
+const values={ADMIN_USERNAME:'admin',ADMIN_PASSWORD_HASH:!reset&&/^scrypt:[0-9a-f]{32}:[0-9a-f]{128}$/.test(get('ADMIN_PASSWORD_HASH')??'')?get('ADMIN_PASSWORD_HASH'):await hashAdminPassword('admin123'),ADMIN_SESSION_SECRET:!reset&&/^[0-9a-f]{64}$/.test(get('ADMIN_SESSION_SECRET')??'')?get('ADMIN_SESSION_SECRET'):randomBytes(32).toString('hex'),ADMIN_DB_READ_TOKEN:!reset&&/^[0-9a-f]{64}$/.test(get('ADMIN_DB_READ_TOKEN')??'')?get('ADMIN_DB_READ_TOKEN'):randomBytes(32).toString('hex')};
+const lines=source.split(/\r?\n/).filter(line=>!Object.keys(values).some(key=>line.startsWith(key+'=')));
+writeFileSync(path,lines.join('\n').trimEnd()+'\n'+Object.entries(values).map(([key,value])=>`${key}=${value}`).join('\n')+'\n');
+mkdirSync('.test-results',{recursive:true});
+const hash=createHash('sha256').update(values.ADMIN_DB_READ_TOKEN).digest('hex');
+writeFileSync('.test-results/admin-access.sql',`-- Run after the admin migration in your own Supabase SQL Editor.\ninsert into vanta_private.admin_settings (singleton, token_sha256)\nvalues (true, '${hash}')\non conflict (singleton) do update set token_sha256 = excluded.token_sha256;\n`);
+console.log('Admin ayarları .env.local dosyasına yazıldı.');
+console.log('Admin migration ardından .test-results/admin-access.sql dosyasını Supabase SQL Editor içinde çalıştırın.');
+console.log('Gizli değerler terminalde gösterilmedi.');
