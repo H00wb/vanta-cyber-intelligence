@@ -47,7 +47,7 @@ Demo girişini admin / admin123 olarak belirledim. Bunun herkese açık değerle
 
 Birim testlerini, taklit Supabase HTTP/SDK testlerini ve gerçek veritabanına giden tarayıcı kontrollerini ayırıyorum. Önceki geliştirme turlarında 47 Node, 15 yerel ve 15 canlı tarayıcı testi geçti; veritabanı sonradan temizlendiği için bu tarihsel sonuçlar eski kayıtların bugün varlığını kanıtlamaz.
 
-Güncel yeniden kontrol: Node 75, tarayıcı yerel 21/21 ve canlı 21/21; canlı kontrol zamanı 8 Ekim 2026, 03:32 (Europe/Istanbul). Sonuçları güncel yayın ve mevcut kayıt üzerinden yeniden kontrol ederek teslim kaydına işliyoruz. Yeni testlerde kurgusal veri kullanılır; mevcut kullanıcı kaydı silinmez. Paylaşılan ekran görüntülerinde mevcut gerçek kişinin isim ve e-postasını yayımlamıyorum.
+Bir önceki yönetim sürümünün kontrolü: Node 75, tarayıcı yerel 21/21 ve canlı 21/21; canlı kontrol zamanı 8 Ekim 2026, 03:32 (Europe/Istanbul). Bu sonuç, aşağıdaki yeni ad-soyad değişikliğinin güncel canlı kanıtı değildir. Sonuçları güncel yayın ve mevcut kayıt üzerinden yeniden kontrol ederek teslim kaydına işliyoruz. Yeni testlerde kurgusal veri kullanılır; mevcut kullanıcı kaydı silinmez. Paylaşılan ekran görüntülerinde mevcut gerçek kişinin isim ve e-postasını yayımlamıyorum.
 
 README'de kurulum ve erişim adımlarını, TEST_REHBERI.txt'de senaryoları ve beklenen sonuçları verdim. Geçmiş test kimliklerini güncel kalıcılık kanıtı olarak taşımadım. Teslim commit'i, yayın ve kaynak arşivi son teslim kaydında birlikte belirtilir.
 
@@ -56,10 +56,24 @@ README'de kurulum ve erişim adımlarını, TEST_REHBERI.txt'de senaryoları ve 
 
 Yönetim girişi için değerlendirme hesabının kullanıcı adı/parola şartını korudum. İmzalı çerez kontrolünü yalnız arayüzde bırakmadık: kayıt API'si geçerli oturum olmadan veritabanı deposunu çağırmaz. Beş dakikalık giriş sınırını process belleği yerine PostgreSQL'e taşıdık; Vercel'in farklı function örneklerinde de aynı sayaç kullanılır. Anahtar, güvenilir Vercel IP başlığının HMAC özetiyle oluşturulur; ham IP saklanmaz.
 
-Admin eklenince ilk tarayıcı turunda 18/21 geçti. İki alert seçicisi Next.js route announcer'ıyla, bir region seçicisi iki bölgeyle eşleşti. AI'ın önerdiği genel seçicileri gerçek hata paragrafı ve kaydırılabilir tablo bölgesiyle daraltarak değiştirdik. Son tam yerel ve canlı turlar 21/21 geçti. Bu hata arayüz mesajı veya erişilebilirlik duyurusu kaldırılarak gizlenmedi.
+Admin eklenince ilk tarayıcı turunda 18/21 geçti. İki alert seçicisi Next.js route announcer'ıyla, bir region seçicisi iki bölgeyle eşleşti. AI'ın önerdiği genel seçicileri gerçek hata paragrafı ve kaydırılabilir tablo bölgesiyle daraltarak değiştirdik. Bu yönetim sürümünün tam yerel ve canlı turları 21/21 geçti. Bu hata arayüz mesajı veya erişilebilirlik duyurusu kaldırılarak gizlenmedi.
 
 Gerçek Supabase kontrolünde yanlış okuma token'ı ve anonim tablo okuması 401 aldı. Aynı kurgusal limit anahtarına 11 paralel veritabanı çağrısında 10 izin ve 1 ret çıktı. Canlı sunucuda uydurulmuş ve süresi dolmuş oturumları, yabancı/eksik Origin'i, Secure çerezi ve çıkışı ayrıca kontrol ettik. Bu sonuçları mock testlerin başarısı yerine koymadım; iki katmanın kanıtını ayrı yazdım.
 
 Supabase security advisor raporunu da okuduk. Üç kapalı tabloda RLS policy bulunmaması bilgi düzeyi uyarı üretti; doğrudan tablo erişimi bilerek kapalı, işlemler sınırlı fonksiyonlardan geçiyor. SECURITY DEFINER fonksiyonlarının anon tarafından çağrılabilmesi ayrıca uyarı olarak göründü. Talep fonksiyonu açık form içindir; yönetim fonksiyonları veri okumadan önce ayrı sunucu token'ının özetini kontrol eder. Boş search_path, sabit sorgular, dar EXECUTE yetkileri ve gerçek ret testleriyle bu tercih doğrulandı. Raporun bütün uyarılarının kapandığını iddia etmiyorum. [RLS bildirimi](https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy) ve [anon SECURITY DEFINER bildirimi](https://supabase.com/docs/guides/database/database-linter?lint=0028_anon_security_definer_function_executable) bu tasarımın incelenecek sınırlarını açıklıyor.
 
-Sonuçları JSON yığınları yerine okunabilir CANLI_DOGRULAMA.md ve TEST_SONUCLARI.md belgelerine taşıdım. Kanıt ekranları yalnız yeni kurgusal kayıtları içerir. Kontrol sonunda bu turda oluşturulan 15 test satırını yalnız kayıt kimlikleri ve kurgusal alanlarıyla eşleştirerek temizledik. Mevcut tek kayıt korundu; temizlik öncesi ve sonrası bütün satır özeti eşleşti. Ekrandaki test kimliklerinin temizlikten sonra bulunmayacağını açıkça yazdım.
+Sonuçları JSON yığınları yerine okunabilir CANLI_DOGRULAMA.md ve TEST_SONUCLARI.md belgelerine taşıdım. Kanıt ekranları yalnız yeni kurgusal kayıtları içerir. 03:32'de tamamlanan önceki kontrolün sonunda o turda oluşturulan 15 test satırını yalnız kayıt kimlikleri ve kurgusal alanlarıyla eşleştirerek temizledik. Mevcut tek kayıt korundu; temizlik öncesi ve sonrası bütün satır özeti eşleşti. Ekrandaki test kimliklerinin temizlikten sonra bulunmayacağını açıkça yazdım.
+
+## Ad ve soyadın birlikte girilmesini istemem
+
+Tek bir ad yazılmasının kabul edilmemesini istedim. Codex ile ortak validator'a, kenar boşlukları temizlendikten sonra Unicode boşluklarla ayrılan en az iki dolu bölüm şartı ekledik. Birden çok adı veya arada birden çok boşluğu kabul ettik; boş soyadı tamamlanmış bilgi gibi değerlendirmedik. Bu kontrol adın yapısını denetler; harf kümesini daraltmaz ve kişinin kimliğini doğrulamaz.
+
+Aynı kuralı `20261008015909_require_full_name.sql` migration'ıyla PostgreSQL'e taşıdık. JavaScript'in `\s` boşluk sınıfını SQL'de açık Unicode karakterleriyle eşledik; RPC'nin ad normalizasyonunu da aynı sınıfla yaptık. Tablo ve fonksiyon yetkilerini değiştirmedik.
+
+Yeni regresyon testi tek parçalı adları hem ortak validator'da hem API'de kontrol eder: 422, ad alanı hatası, depo açılmaması ve kayıt kimliğinin dönmemesi beklenir. Normal ad-soyad, çok parçalı ad, birden çok boşluk ve NBSP örnekleri kabul edilir. Önceki uzunluk testlerini de iki parçalı adlarla koruduk.
+
+Bu değişiklikten sonra 76 Node testinin tamamı geçti. Tarayıcıya tek ad için anlaşılır hata, ad alanına odak, formdan POST çıkmaması ve doğrudan API'de 422 senaryosu eklendi; toplam 22 tarayıcı senaryosu bulunuyor. Güncel tarayıcı sonucu: yerel 22/22 ve canlı 22/22 geçti. Canlı kontrol zamanı: 8 Ekim 2026, 05:11 (Europe/Istanbul). Yeni doğrulama tamamlanana kadar önceki 21/21 sonucunu bu değişikliğe taşımadım.
+
+Yeni tarayıcı testinde JSON yanıtının tipi unknown olarak geldiği için ilk derleme tip kontrolünde durdu. Yanıtı varsayılan bir tipe zorlamak yerine Playwright'ın toHaveProperty kontrolüyle beklenen hata alanını doğruladık. İkinci üretim derlemesi ve 22 yerel tarayıcı senaryosu geçti.
+
+Son canlı turda 22/22 geçti. Tek ad içeren anonim Supabase RPC isteği 400/23514 ile reddedildi ve SQL'de sıfır satır doğrulandı. PostgreSQL kontrolündeki üç ret/dört kabul örneği geri alındı. Bu turdaki 10 kurgusal kayıt yalnız kendi kimlikleriyle temizlendi; başta mevcut olan iki kaydın bütün satır özetleri değişmedi. Supabase advisor sonuçları önceki kapsamlı güvenlik kontrolüyle aynı kaldı.

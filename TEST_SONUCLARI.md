@@ -2,18 +2,21 @@
 
 Kontrol tarihi: **8 Ekim 2026**.
 
-- Node: **75 testin 75'i geçti; başarısız test yok.**
-- Tam yerel ve canlı tarayıcı koşusu: **yerel 21/21 ve Vercel üzerinde 21/21 geçti; atlanan veya başarısız senaryo yok. Canlı koşu 8 Ekim 2026 03:29–03:30 (Europe/Istanbul) arasında çalıştı**.
+- Node: **76 testin 76'sı geçti; başarısız test yok.**
+- Son ad-soyad değişikliğinin 22 tarayıcı senaryosu: **yerel 22/22 ve canlı 22/22 geçti**.
+- Bu değişikliğin canlı kontrol zamanı: **8 Ekim 2026, 05:11 (Europe/Istanbul)**.
+
+Önceki yönetim sürümünde 75/75 Node, 21/21 yerel ve 21/21 canlı tarayıcı testi geçti. O canlı koşu 8 Ekim 2026 03:29–03:30, son SQL kontrolü 03:32 (Europe/Istanbul) tarihindedir. Bu tarihsel sonuç, yeni ad-soyad kuralının tarayıcı/canlı sonucu olarak kullanılmaz.
 
 Aşağıdaki her numaralı Node maddesi kaynakta ayrı bir testtir. Bir test içinde denenen birden fazla yanıt veya alan örneğini ek test gibi saymadım. Tarayıcıda dört ekran genişliği ayrı çalıştığı için dört ayrı senaryodur.
 
 ## Testlerin kullandığı ortam
 
-Form/API testleri geçici SQLite test deposu veya taklit depo kullanır. Supabase kayıt ve yönetim deposu testlerinde HTTP bağlantısı taklit edilir. SSR testleri taklit SDK ile cookie/cache aktarımını kontrol eder. Yönetim kimlik testleri gerçek scrypt ve imza kodunu çalıştırır; veritabanı işlemleri test deposuyla karşılanır. Bu 75 test, gerçek PostgreSQL erişiminin veya veritabanındaki giriş sınırının bağımsız kanıtı değildir.
+Form/API testleri geçici SQLite test deposu veya taklit depo kullanır. Supabase kayıt ve yönetim deposu testlerinde HTTP bağlantısı taklit edilir. SSR testleri taklit SDK ile cookie/cache aktarımını kontrol eder. Yönetim kimlik testleri gerçek scrypt ve imza kodunu çalıştırır; veritabanı işlemleri test deposuyla karşılanır. Bu 76 test, gerçek PostgreSQL erişiminin veya veritabanındaki giriş sınırının bağımsız kanıtı değildir.
 
 Tarayıcıda normal gönderim, bağlantı döndükten sonraki gönderim ve kayıp yanıt senaryoları yapılandırılan gerçek Supabase'e gider. Yönetim girişleri de gerçek sunucu akışını kullanır; kayıt okuma senaryosu gerçek satırı UUID ile geri okur. Hata yanıtları ve mobil panel verisi bazı senaryolarda özellikle taklit edilir. Bunları gerçek depolama başarısı olarak sunmuyorum.
 
-## Form ve API — 31 test
+## Form ve API — 32 test
 
 Kaynak: `tests/request.test.mjs`. Aşağıdaki testlerin tamamı geçti.
 
@@ -31,7 +34,7 @@ Kaynak: `tests/request.test.mjs`. Aşağıdaki testlerin tamamı geçti.
 12. **Geçersiz UUID:** Hatalı gönderim kimliği 422 alır.
 13. **Tek emoji isim:** Bir kod noktası olan isim alt sınırı karşılamaz.
 14. **On emoji açıklama:** On kod noktası olan açıklama alt sınırı karşılamaz.
-15. **Geçerli sınırlar:** İki emoji isim, 20 emoji açıklama ve tam üst sınırlardaki metinler depoya ulaşır.
+15. **Geçerli sınırlar:** Aralarında boşluk bulunan iki emoji adı (`😀 😀`), 20 emoji açıklama, 100 karakterlik iki parçalı ad ve 2000 karakter açıklama depoya ulaşır.
 16. **Eksik/nesne olmayan gövde:** null, dizi, metin veya eksik alanlı nesne 422 alır.
 17. **Kaydedilen alanlar:** Yeni 201 yanıtının kimliği, dört alanı ve zamanı test deposundaki satırla eşleşir.
 18. **Kayıt tamamlanmasını bekleme:** Depo sonucu çözülmeden başarı yanıtı dönmez.
@@ -48,6 +51,7 @@ Kaynak: `tests/request.test.mjs`. Aşağıdaki testlerin tamamı geçti.
 29. **Başarı koşulu:** Hatalı HTTP sonucu, eksik kimlik veya farklı kimlik başarı sayılmaz.
 30. **Test dosyasında kalıcılık:** SQLite dosyası kapatılıp açıldığında satır korunur; bu yerel test deposu kontrolüdür.
 31. **Proxy origin:** Dış Host/forwarded HTTPS kabul edilir; yabancı origin reddedilmeye devam eder.
+32. **Ad ve soyad birlikte:** `Deniz`, sonunda yalnız boşluk/NBSP bulunan ad ve diğer tek parçalı örnekler ortak validator ve sunucuda reddedilir; API 422 verir, depo açılmaz ve kimlik dönmez. `Deniz Örnek`, birden çok boşluk, çok parçalı ad ve NBSP ile ayrılmış ad-soyad kabul edilir.
 
 ## Supabase kayıt bağlantısı — 10 test
 
@@ -115,7 +119,7 @@ Kaynak: `tests/admin-store.test.mjs`. HTTP bağlantısı taklittir; tamamı geç
 9. **Geçersiz deneme sonucu:** Bozuk sonuç veya yanlış anahtar biçimi giriş izni oluşturmaz.
 10. **Depo yapılandırması:** Geçersiz adres, anahtar veya token ağ çağrısı yapmadan reddedilir.
 
-## Sayfa ve form tarayıcı testleri — 15 senaryo
+## Sayfa ve form tarayıcı testleri — 16 senaryo
 
 Kaynak: `e2e/site.spec.ts`. Güncel tam koşu sonucu üstteki tarayıcı kaydında belirtilir.
 
@@ -134,6 +138,7 @@ Kaynak: `e2e/site.spec.ts`. Güncel tam koşu sonucu üstteki tarayıcı kaydın
 13. **%200 metin:** Büyütülmüş masaüstü içerik yatay taşmaz; form görünür kalır.
 14. **Gerçek kayıttan sonra yanıt kaybı:** İlk kayıt yapılır fakat yanıt kesilir; tekrar aynı UUID için 200/replayed alır. Tek satır kaldığı ayrıca veritabanından kontrol edilir.
 15. **15 saniye zaman aşımı:** Sonuç belirsizliği doğru anlatılır; alanlar korunur ve gönderim düğmesi yeniden kullanılabilir.
+16. **Tek parçalı ad:** Diğer alanlar geçerliyken `Deniz` girilirse “Adınızı ve soyadınızı birlikte girin.” görünür, ad alanı odaklanır ve form POST başlatmaz. Aynı veri doğrudan API'ye gönderilirse 422 ve yalnız ad alanı hatası döner; başarı/kimlik oluşmaz. Bu yeni senaryonun koşu sonucu üstteki güncel kayda işlenir.
 
 ## Yönetim tarayıcı testleri — 6 senaryo
 

@@ -5,10 +5,14 @@ Kaynak kod: https://github.com/H00wb/vanta-cyber-intelligence
 Yönetim sayfası: https://vanta-cyber-intelligence.vercel.app/admin
 Demo giriş: admin / admin123
 
-Güncel yeniden kontrol:
-Node testleri: 75
-Tarayıcı testleri: yerel 21/21 ve canlı 21/21
-Canlı kontrol zamanı: 8 Ekim 2026, 03:32 (Europe/Istanbul)
+Son ad-soyad değişikliğinin kontrolü:
+Node testleri: 76/76 geçti
+22 tarayıcı senaryosunun sonucu: yerel 22/22 ve canlı 22/22 geçti
+Canlı kontrol zamanı: 8 Ekim 2026, 05:11 (Europe/Istanbul)
+
+Önceki yönetim sürümünün sonucu: 75/75 Node, yerel 21/21 ve canlı 21/21.
+Önceki canlı/SQL kontrolü: 8 Ekim 2026, 03:32 (Europe/Istanbul).
+Bu eski sonuçlar yeni ad-soyad kuralının canlı doğrulaması sayılmaz.
 
 Aşağıda “beklenen sonuç”, kontrolün kabul şartıdır. Bir testin geçmişte
 geçmesi, eski satırın bugün veritabanında bulunduğu anlamına gelmez.
@@ -23,6 +27,12 @@ a) Siteyi masaüstünde ve telefonda açın. VANTA'nın kime yardımcı olduğun
 
 b) Formu boş gönderin. İlgili alanlarda anlaşılır hata görünmeli ve odak
    ilk hatalı alana gitmeli. Geçerli kayıt veya başarı mesajı oluşmamalı.
+
+   Diğer alanları geçerli doldurup Ad soyad alanına yalnız Deniz yazın.
+   Beklenen: “Adınızı ve soyadınızı birlikte girin.” mesajı, ad alanına odak,
+   sıfır form POST isteği ve başarı mesajının olmaması. Sonunda yalnız boşluk
+   bulunan Deniz de kabul edilmez. Deniz Örnek veya Deniz Ali Örnek geçerlidir.
+   Bu kontrol boşlukla ayrılan en az iki dolu bölüm arar.
 
 c) Önce mevcut kaydı incelemek için doğrudan /admin adresini açın.
    Ana sayfada yönetim bağlantısı yoktur. admin / admin123 ile giriş yapın.
@@ -61,6 +71,12 @@ Yeni Supabase projesinin SQL Editor'ünde sırayla uygulayın:
 
   supabase/migrations/20261007212753_vanta_requests.sql
   supabase/migrations/20261008000924_vanta_admin_read_access.sql
+  supabase/migrations/20261008015909_require_full_name.sql
+
+Üçüncü migration ad alanında en az iki dolu bölüm zorunluluğunu veritabanına
+ve talep RPC'sine ekler. Unicode boşluk sınıfını ortak validator ile eşler;
+tablo/RPC yetkilerini değiştirmez. Mevcut projeye yalnız uygulanmamış
+migration'ı ekleyin.
 
 Daha önce uygulanmış migration'ı tekrar çalıştırmayın. CLI kullanıyorsanız
 supabase link ile doğru projeyi bağlayıp supabase db push çalıştırabilirsiniz.
@@ -88,7 +104,8 @@ Yerel adres: http://127.0.0.1:5173
 Yerel uygulama da ayarladığınız gerçek Supabase'e yazar. Testlerin gerçek
 kayıt oluşturduğunu dikkate alın; yalnız kurgusal veri kullanın.
 
-75 Node ve 21 tarayıcı testinin ayrı ayrı açıklaması TEST_SONUCLARI.md içindedir.
+76 Node ve 22 tarayıcı senaryosunun ayrı ayrı açıklaması TEST_SONUCLARI.md içindedir.
+Node sonucu geçti; yeni tarayıcı/canlı sonucu bu rehberin başında belirtilir.
 Ekran görüntülerini CANLI_DOGRULAMA.md üzerinden inceleyebilirsiniz.
 
 3. OTOMATİK KONTROLLERİ ÇALIŞTIRMA
@@ -120,8 +137,14 @@ tests/request.test.mjs içindeki mevcut senaryolar:
   kısa açıklama, 2001 karakter açıklama, isimde kontrol karakteri,
   açıklamanın sayı olması, geçersiz UUID, tek emoji isim ve on emoji açıklama.
   Beklenen: 422, ilgili alan hatası, depo açılmadan ret ve sıfır kayıt.
-- İki emoji isim/20 emoji açıklama ile 100 karakter isim/2000 karakter
-  açıklama sınırları kabul edilir.
+- Ad soyad yalnız tek bölümden oluşamaz. Deniz, sonunda yalnız boşluk
+  veya NBSP bulunan ad ve tek parçalı diğer örnekler ortak validator ve
+  API'de reddedilir. API 422 ve ad hatası döndürür; depo açılmaz, kimlik dönmez.
+  Deniz Örnek, Deniz Ali Örnek, birden çok boşluk veya NBSP ile ayrılmış
+  ad-soyad kabul edilir.
+- Aralarında boşluk bulunan iki emoji adı (😀 😀) ve 20 emoji açıklama kabul
+  edilir. İki parçalı 100 karakter ad (98 A, boşluk, B) ile 2000 karakter
+  açıklama üst sınırları da kabul edilir.
 - null, dizi, metin, boş nesne veya eksik alanlı gövde reddedilir.
 - Yeni kaydın 201 yanıtı, test deposundaki dört alan ve zamanla eşleşir.
 - Depo işlemi bitmeden API başarı dönmez.
@@ -176,6 +199,9 @@ e2e/site.spec.ts içindeki form ve sayfa kontrolleri:
 
 - 320, 390, 768 ve 1440 px genişliklerde başlık/CTA/form görünür; yatay taşma yoktur.
 - Geçersiz alanlar POST başlatmaz; odak ilk hatalı alana gider.
+- Diğer alanlar geçerliyken tek parçalı Deniz adı ayrı senaryoyla sınanır:
+  ad-soyad mesajı ve odak görünür, form POST başlatmaz. Aynı gövdenin doğrudan
+  API gönderimi 422 alır ve başarılı kayıt kimliği döndürmez.
 - Gönderiliyor durumunda tekrarlayan tıklama yeni istek başlatmaz.
   Gerçek 201 yanıtından sonra doğru kayıt kimliğiyle başarı gösterilir.
 - Simüle edilen 503'te alanlar korunur ve başarı gösterilmez.
