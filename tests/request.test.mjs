@@ -48,10 +48,27 @@ for (const [label, patch, key] of [
   const response = await handleRequest(req({ ...valid(), ...patch }), () => { throw new Error("Database must not be opened"); });
   assert.equal(response.status, 422); assert.ok((await response.json()).errors[key]); assert.equal(count(), 0);
 });
+test("single-part names and blank surname cannot pass client or server validation", async () => {
+  for (const name of ["Deniz", " Deniz   ", "Deniz\u00a0", "😀😀", "A".repeat(100)]) {
+    const payload = { ...valid(), name };
+    const client = validateRequest(payload);
+    assert.equal(client.data, null);
+    assert.equal(client.errors.name, "Adınızı ve soyadınızı birlikte girin.");
+    const response = await handleRequest(req(payload), () => { throw new Error("Database must not be opened"); });
+    assert.equal(response.status, 422);
+    const body = await response.json();
+    assert.equal(body.errors.name, "Adınızı ve soyadınızı birlikte girin.");
+    assert.equal(body.id, undefined);
+    assert.equal(count(), 0);
+  }
+  for (const name of ["Deniz Örnek", "Deniz   Örnek", "Deniz Ali Örnek", "Deniz\u00a0Örnek"]) {
+    assert.deepEqual(validateRequest({ ...valid(), name }).errors, {});
+  }
+});
 test("exact character boundaries including astral Unicode reach database", async () => {
-  const payload = { ...valid(), name: "😀😀", description: "😀".repeat(20) };
+  const payload = { ...valid(), name: "😀 😀", description: "😀".repeat(20) };
   assert.equal((await handleRequest(req(payload), () => database)).status, 201);
-  assert.equal((await handleRequest(req({ ...valid(), name: "A".repeat(100), description: "A".repeat(2000) }), () => database)).status, 201);
+  assert.equal((await handleRequest(req({ ...valid(), name: "A".repeat(98) + " B", description: "A".repeat(2000) }), () => database)).status, 201);
 });
 test("missing fields and non-object payloads are rejected", async () => {
   for (const payload of [null, [], "text", {}, { name: "Deniz" }]) assert.equal((await handleRequest(req(payload), () => database)).status, 422);

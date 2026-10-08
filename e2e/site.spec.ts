@@ -37,6 +37,44 @@ test("client validation blocks network request and focuses first invalid field",
   await expect(page.locator("#email-error")).toBeVisible();
   expect(posts).toBe(0); await expect(page.getByText("Talebiniz kaydedildi.")).toHaveCount(0);
 });
+test("a single-part name is rejected by browser and API without saving a request", async ({ page }) => {
+  await open(page); await fill(page);
+  const name = page.getByLabel(/Ad soyad/);
+  await name.fill("Deniz");
+  let posts = 0;
+  page.on("request", request => {
+    if (request.method() === "POST" && request.url().endsWith("/api/requests")) posts++;
+  });
+  const message = "Adınızı ve soyadınızı birlikte girin.";
+  await page.getByRole("button", { name: "Talep gönder" }).click();
+  await expect(page.locator("#name-error")).toHaveText(message);
+  await expect(name).toBeFocused();
+  expect(posts).toBe(0);
+  await expect(page.getByText("Talebiniz kaydedildi.", { exact: true })).toHaveCount(0);
+  await page.locator("form").screenshot({ path: "evidence/name-error.png" });
+
+  const payload = {
+    name: "Deniz",
+    email: "deniz@example.com",
+    service: "attack-surface",
+    description,
+    requestId: await page.evaluate(() => crypto.randomUUID()),
+  };
+  const api = await page.evaluate(async data => {
+    const response = await fetch("/api/requests", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    return { status: response.status, body: await response.json() };
+  }, payload);
+  expect(api.status).toBe(422);
+  expect(api.body).toHaveProperty("errors", { name: message });
+  expect(api.body).not.toHaveProperty("id");
+  expect(posts).toBe(1);
+  await expect(page.getByText("Talebiniz kaydedildi.", { exact: true })).toHaveCount(0);
+});
+
 test("loading state locks resubmission and success follows real API response", async ({ page }) => {
   await open(page); await fill(page); let posts = 0;
   page.on("request", req => { if (req.url().endsWith("/api/requests")) posts++; });
